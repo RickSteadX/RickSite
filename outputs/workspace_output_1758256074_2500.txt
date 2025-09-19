@@ -1,0 +1,45 @@
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+
+<nav>
+    <ul class="navbar-nav">
+        <AuthorizeView>
+            <Authorized>
+                <li class="nav-item">
+                    <span class="nav-link">Welcome, @context.User.Identity.Name</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" @onclick="LogoutAsync" @onclick:preventDefault>
+                        Logout
+                    </a>
+                </li>
+            </Authorized>
+            <NotAuthorized>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/login">
+                        Login
+                    </NavLink>
+                </li>
+            </NotAuthorized>
+        </AuthorizeView>
+    </ul>
+</nav>
+
+@code {
+    private async Task LogoutAsync()
+    {
+        var authStateProvider = (CustomAuthStateProvider)AuthStateProvider;
+        var authService = new AuthService(new HttpClient { BaseAddress = new Uri(NavigationManager.BaseUri) });
+        
+        try
+        {
+            await authService.LogoutAsync();
+            authStateProvider.NotifyUserLogout();
+            NavigationManager.NavigateTo("/login");
+        }
+        catch (Exception)
+        {
+            // Handle logout failure
+        }
+    }
+}

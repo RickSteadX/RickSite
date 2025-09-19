@@ -5,7 +5,7 @@
 <div class="@(_isDarkTheme ? "dark-theme" : "")">
     <header class="navbar">
         <a href="/admin" class="navbar-brand">Admin Dashboard</a>
-        <PersonalWebsite.Client.Shared.AdminNavMenu />
+        <AdminNavMenu />
         <button class="theme-toggle" @onclick="ToggleTheme">
             @if (_isDarkTheme)
             {

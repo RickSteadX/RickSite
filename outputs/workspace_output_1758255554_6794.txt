@@ -1,0 +1,2 @@
+[fix-container-build dabad64] Fix NuGet package restoration in Dockerfile
+ 1 file changed, 6 insertions(+), 3 deletions(-)
