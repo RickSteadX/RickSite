@@ -16,7 +16,7 @@ echo "Starting webapp container..."
 podman run -d \
   --name personalwebsite-app \
   --network app-network \
-  -p 8080:80 \
+  -p 8080:6060 \
   -v app-data:/app/data \
   -e ASPNETCORE_ENVIRONMENT=Production \
   -e ConnectionStrings__DefaultConnection=Data Source=/app/data/personalwebsite.db \

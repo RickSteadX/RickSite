@@ -33,7 +33,7 @@ COPY --from=build /app/publish .
 RUN chown -R appuser:appgroup /app
 
 # Set environment variables
-ENV ASPNETCORE_URLS=http://+:80
+ENV ASPNETCORE_URLS=http://+:6060
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Switch to non-root user
@@ -41,10 +41,10 @@ USER appuser
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:80/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:6060/health || exit 1
 
-# Expose port 80
-EXPOSE 80
+# Expose port 6060
+EXPOSE 6060
 
 # Start the application
 ENTRYPOINT ["dotnet", "PersonalWebsite.Server.dll"]

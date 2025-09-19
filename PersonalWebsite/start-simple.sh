@@ -11,7 +11,7 @@ podman build -t personalwebsite-app .
 echo "Starting webapp directly on port 6060..."
 podman run -d \
   --name personalwebsite-app \
-  -p 6060:80 \
+  -p 6060:6060 \
   -v app-data:/app/data \
   -e ASPNETCORE_ENVIRONMENT=Production \
   -e ConnectionStrings__DefaultConnection=Data Source=/app/data/personalwebsite.db \
