@@ -1,5 +1,5 @@
 # Simple Caddyfile for port 6060
 :6060 {
-    reverse_proxy localhost:8080
+    reverse_proxy localhost:6060
     encode gzip
 }

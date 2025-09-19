@@ -3,7 +3,7 @@
 # Using port 6060 for the application
 :6060 {
     # Reverse proxy to the ASP.NET Core application
-    reverse_proxy webapp:80 {
+    reverse_proxy webapp:6060 {
         # Health checks
         health_path /health
         health_interval 30s
@@ -53,7 +53,7 @@
 
 # For production with HTTPS, uncomment and modify the following:
 # example.com {
-#     reverse_proxy webapp:80
+#     reverse_proxy webapp:6060
 #     encode gzip zstd
 #     tls your-email@example.com
 #     # Same headers and other configurations as above
