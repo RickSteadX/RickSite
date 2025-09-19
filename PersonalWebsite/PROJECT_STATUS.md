@@ -46,6 +46,7 @@ The Personal Website with CMS project has been successfully completed and is rea
    - Component naming conflicts
    - CSS file naming issues
    - Page directive syntax errors
+   - Razor compilation errors in admin pages
 
 3. **Project Structure Issues**
    - File organization
