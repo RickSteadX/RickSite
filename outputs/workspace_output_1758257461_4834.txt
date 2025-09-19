@@ -1,0 +1,37 @@
+     1	using System;
+     2	using System.Collections.Generic;
+     3	using System.Text.Json;
+     4	
+     5	namespace PersonalWebsite.Client.Models
+     6	{
+     7	    public class Page
+     8	    {
+     9	        public int Id { get; set; }
+    10	        public string Title { get; set; }
+    11	        public string Slug { get; set; }
+    12	        public string Description { get; set; }
+    13	        public string Content { get; set; }
+    14	        public bool IsPublished { get; set; }
+    15	        public DateTime CreatedAt { get; set; }
+    16	        public DateTime? UpdatedAt { get; set; }
+    17	        public DateTime? PublishedAt { get; set; }
+    18	        public int Order { get; set; }
+    19	        public bool ShowInNavigation { get; set; }
+    20	        public string LayoutJson { get; set; }
+    21	        
+    22	        // Helper method to get layout as dictionary
+    23	        public Dictionary<string, object> GetLayout()
+    24	        {
+    25	            if (string.IsNullOrEmpty(LayoutJson))
+    26	                return new Dictionary<string, object>();
+    27	                
+    28	            return JsonSerializer.Deserialize<Dictionary<string, object>>(LayoutJson);
+    29	        }
+    30	        
+    31	        // Helper method to set layout from dictionary
+    32	        public void SetLayout(Dictionary<string, object> layout)
+    33	        {
+    34	            LayoutJson = JsonSerializer.Serialize(layout);
+    35	        }
+    36	    }
+    37	}

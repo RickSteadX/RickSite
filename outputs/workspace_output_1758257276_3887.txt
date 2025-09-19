@@ -1,0 +1,6 @@
+    80	                _components = await PageService.GetPageComponentsAsync(_page.Id);
+    81	            }
+    82	        }
+    83	        catch (Exception ex)
+    84	        {
+    85	            _errorMessage = ex.Message;

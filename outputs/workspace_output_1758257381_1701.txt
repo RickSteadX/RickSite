@@ -1,0 +1,100 @@
+     1	@page "/admin/page-builder"
+     2	@page "/admin/page-builder/{PageId:int}"
+     3	@attribute [Authorize]
+     4	@layout AdminLayout
+     5	@inject PageService PageService
+     6	@inject PageComponentService ComponentService
+     7	@inject NavigationManager NavigationManager
+     8	@inject IJSRuntime JSRuntime
+     9	
+    10	<PageTitle>Page Builder - Admin Dashboard</PageTitle>
+    11	
+    12	<div class="container-fluid">
+    13	    <div class="d-flex justify-content-between align-items-center mb-4">
+    14	        <h1>Page Builder</h1>
+    15	        <div>
+    16	            <button class="btn btn-outline-secondary me-2" @onclick="NavigateBack">Cancel</button>
+    17	            <button class="btn btn-primary" @onclick="SavePageAsync" disabled="@_isSaving">
+    18	                @if (_isSaving)
+    19	                {
+    20	                    <span>Saving...</span>
+    21	                }
+    22	                else
+    23	                {
+    24	                    <span>Save Page</span>
+    25	                }
+    26	            </button>
+    27	        </div>
+    28	    </div>
+    29	    
+    30	    @if (_loading)
+    31	    {
+    32	        <div class="loading-container">
+    33	            <div class="spinner"></div>
+    34	            <p>Loading page builder...</p>
+    35	        </div>
+    36	    }
+    37	    else if (_page != null)
+    38	    {
+    39	        <div class="page-builder">
+    40	            <div class="component-sidebar">
+    41	                <div class="card mb-3">
+    42	                    <div class="card-header">
+    43	                        <h5>Page Information</h5>
+    44	                    </div>
+    45	                    <div class="card-body">
+    46	                        <div class="form-group mb-3">
+    47	                            <label for="title" class="form-label">Page Title</label>
+    48	                            <input id="title" @bind="_page.Title" class="form-control" />
+    49	                        </div>
+    50	                        
+    51	                        <div class="form-group mb-3">
+    52	                            <label for="slug" class="form-label">Page Slug</label>
+    53	                            <div class="input-group">
+    54	                                <span class="input-group-text">/page/</span>
+    55	                                <input id="slug" @bind="_page.Slug" class="form-control" />
+    56	                            </div>
+    57	                        </div>
+    58	                        
+    59	                        <div class="form-group mb-3">
+    60	                            <div class="form-check form-switch">
+    61	                                <input id="isPublished" @bind="_page.IsPublished" type="checkbox" class="form-check-input" />
+    62	                                <label for="isPublished" class="form-check-label">Published</label>
+    63	                            </div>
+    64	                        </div>
+    65	                    </div>
+    66	                </div>
+    67	                
+    68	                <div class="card mb-3">
+    69	                    <div class="card-header">
+    70	                        <h5>Components</h5>
+    71	                    </div>
+    72	                    <div class="card-body">
+    73	                        <p>Drag components to add them to your page:</p>
+    74	                        
+    75	                        <div class="component-item" draggable="true" @ondragstart="() => HandleDragStart('text')">
+    76	                            <h5>Text Block</h5>
+    77	                            <p>Add paragraphs, headings, and formatted text.</p>
+    78	                        </div>
+    79	                        
+    80	                        <div class="component-item" draggable="true" @ondragstart="() => HandleDragStart('image')">
+    81	                            <h5>Image</h5>
+    82	                            <p>Add a single image with optional caption.</p>
+    83	                        </div>
+    84	                        
+    85	                        <div class="component-item" draggable="true" @ondragstart="() => HandleDragStart('gallery')">
+    86	                            <h5>Gallery</h5>
+    87	                            <p>Add a collection of images in a grid layout.</p>
+    88	                        </div>
+    89	                        
+    90	                        <div class="component-item" draggable="true" @ondragstart="() => HandleDragStart('video')">
+    91	                            <h5>Video</h5>
+    92	                            <p>Embed a video from YouTube or Vimeo.</p>
+    93	                        </div>
+    94	                        
+    95	                        <div class="component-item" draggable="true" @ondragstart="() => HandleDragStart('button')">
+    96	                            <h5>Button</h5>
+    97	                            <p>Add a call-to-action button.</p>
+    98	                        </div>
+    99	                        
+   100	                        <div class="component-item" draggable="true" @ondragstart="() => HandleDragStart('divider')">

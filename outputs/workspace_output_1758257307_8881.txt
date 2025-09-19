@@ -1,0 +1,60 @@
+     1	@page "/page/{Slug}"
+     2	@inject PageService PageService
+     3	@inject IJSRuntime JSRuntime
+     4	
+     5	<PageTitle>@(_page?.Title ?? "Loading...") - Alex Morgan</PageTitle>
+     6	
+     7	@if (_loading)
+     8	{
+     9	    <div class="loading-container">
+    10	        <div class="spinner"></div>
+    11	        <p>Loading page...</p>
+    12	    </div>
+    13	}
+    14	else if (_page != null)
+    15	{
+    16	    <div class="dynamic-page">
+    17	        <div class="container">
+    18	            <h1>@_page.Title</h1>
+    19	            
+    20	            @if (!string.IsNullOrEmpty(_page.Description))
+    21	            {
+    22	                <p class="lead">@_page.Description</p>
+    23	            }
+    24	            
+    25	            <div class="page-content">
+    26	                @((MarkupString)_page.Content)
+    27	            </div>
+    28	            
+    29	            @if (_components != null && _components.Any())
+    30	            {
+    31	                <div class="page-components">
+    32	                    @foreach (var component in _components.OrderBy(c => c.Order))
+    33	                    {
+    34	                        <div class="component @component.ComponentType.ToLower()">
+    35	                            @RenderComponent(component)
+    36	                        </div>
+    37	                    }
+    38	                </div>
+    39	            }
+    40	        </div>
+    41	    </div>
+    42	}
+    43	else
+    44	{
+    45	    <div class="container">
+    46	        <h1>Page Not Found</h1>
+    47	        <p>Sorry, the page you are looking for does not exist or has been moved.</p>
+    48	        <a href="/" class="btn btn-primary">Return to Home</a>
+    49	    </div>
+    50	}
+    51	
+    52	@code {
+    53	    [Parameter]
+    54	    public string Slug { get; set; }
+    55	    
+    56	    private Page _page;
+    57	    private List<PageComponent> _components;
+    58	    private bool _loading = true;
+    59	    private string _errorMessage;
+    60	    

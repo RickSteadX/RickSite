@@ -1,5 +1,6 @@
 @page "/page/{Slug}"
 @inject PageService PageService
+@inject PageComponentService ComponentService
 @inject IJSRuntime JSRuntime
 
 <PageTitle>@(_page?.Title ?? "Loading...") - Alex Morgan</PageTitle>
@@ -51,12 +52,12 @@ else
 
 @code {
     [Parameter]
-    public string Slug { get; set; }
+    public string Slug { get; set; } = string.Empty;
     
-    private Page _page;
-    private List<PageComponent> _components;
+    private Page? _page;
+    private List<PageComponent>? _components;
     private bool _loading = true;
-    private string _errorMessage;
+    private string _errorMessage = string.Empty;
     
     protected override async Task OnInitializedAsync()
     {
@@ -77,7 +78,7 @@ else
             
             if (_page != null)
             {
-                _components = await PageService.GetPageComponentsAsync(_page.Id);
+                _components = await ComponentService.GetPageComponentsAsync(_page.Id);
             }
         }
         catch (Exception ex)
@@ -166,16 +167,16 @@ else
     
     private class ImageComponentProps
     {
-        public string Src { get; set; }
-        public string Alt { get; set; }
-        public string Width { get; set; }
-        public string Height { get; set; }
+        public string Src { get; set; } = string.Empty;
+        public string Alt { get; set; } = string.Empty;
+        public string Width { get; set; } = string.Empty;
+        public string Height { get; set; } = string.Empty;
     }
     
     private class VideoComponentProps
     {
-        public string Src { get; set; }
-        public string Title { get; set; }
+        public string Src { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
     }
     
     private class GalleryComponentProps
@@ -185,7 +186,7 @@ else
     
     private class GalleryImage
     {
-        public string Src { get; set; }
-        public string Alt { get; set; }
+        public string Src { get; set; } = string.Empty;
+        public string Alt { get; set; } = string.Empty;
     }
 }

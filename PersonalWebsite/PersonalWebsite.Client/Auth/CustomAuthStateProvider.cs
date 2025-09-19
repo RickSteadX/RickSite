@@ -12,7 +12,7 @@ namespace PersonalWebsite.Client.Auth
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
         private readonly AuthService _authService;
-        private User _cachedUser;
+        private User? _cachedUser;
 
         public CustomAuthStateProvider(AuthService authService)
         {
@@ -46,7 +46,7 @@ namespace PersonalWebsite.Client.Auth
             }
         }
 
-        public async Task<User> GetUserAsync()
+        public async Task<User?> GetUserAsync()
         {
             if (_cachedUser != null)
                 return _cachedUser;
