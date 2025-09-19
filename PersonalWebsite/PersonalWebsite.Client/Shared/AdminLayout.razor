@@ -1,0 +1,96 @@
+@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<div class="@(_isDarkTheme ? "dark-theme" : "")">
+    <header class="navbar">
+        <a href="/admin" class="navbar-brand">Admin Dashboard</a>
+        <AdminNavMenu />
+        <button class="theme-toggle" @onclick="ToggleTheme">
+            @if (_isDarkTheme)
+            {
+                <span>☀️</span>
+            }
+            else
+            {
+                <span>🌙</span>
+            }
+        </button>
+    </header>
+
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <ul class="admin-nav">
+                <li class="admin-nav-item">
+                    <NavLink class="admin-nav-link" href="/admin" Match="NavLinkMatch.Exact">
+                        Dashboard
+                    </NavLink>
+                </li>
+                <li class="admin-nav-item">
+                    <NavLink class="admin-nav-link" href="/admin/pages">
+                        Pages
+                    </NavLink>
+                </li>
+                <li class="admin-nav-item">
+                    <NavLink class="admin-nav-link" href="/admin/page-builder">
+                        Page Builder
+                    </NavLink>
+                </li>
+                <li class="admin-nav-item">
+                    <NavLink class="admin-nav-link" href="/admin/settings">
+                        Settings
+                    </NavLink>
+                </li>
+                <li class="admin-nav-item">
+                    <a class="admin-nav-link" href="/" target="_blank">
+                        View Site
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="admin-content">
+            @Body
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; @DateTime.Now.Year - Alex Morgan Personal Website Admin</p>
+        </div>
+    </footer>
+</div>
+
+@code {
+    private bool _isDarkTheme;
+    private IJSObjectReference _module;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/theme.js");
+            _isDarkTheme = await _module.InvokeAsync<bool>("getThemePreference");
+            StateHasChanged();
+        }
+    }
+
+    private async Task ToggleTheme()
+    {
+        _isDarkTheme = !_isDarkTheme;
+        if (_module != null)
+        {
+            await _module.InvokeVoidAsync("setThemePreference", _isDarkTheme);
+        }
+    }
+
+    public void Dispose()
+    {
+        _module?.DisposeAsync();
+    }
+}

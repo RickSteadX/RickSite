@@ -1,0 +1,4 @@
+The template "Dotnet local tool manifest file" was created successfully.
+
+You can invoke the tool from this directory using the following commands: 'dotnet tool run dotnet-ef' or 'dotnet dotnet-ef'.
+Tool 'dotnet-ef' (version '9.0.9') was successfully installed. Entry is added to the manifest file /workspace/PersonalWebsite/.config/dotnet-tools.json.

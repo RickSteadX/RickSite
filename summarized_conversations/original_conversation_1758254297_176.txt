@@ -1,0 +1,1 @@
+{'role': 'assistant', 'content': "Let's install Podman for our containerization needs:\n\n<function_calls>\n<execute-command>\n# Install Podman\nsudo apt-get update\nsudo apt-get install -y podman\n</execute-command>\n</function_calls>"}

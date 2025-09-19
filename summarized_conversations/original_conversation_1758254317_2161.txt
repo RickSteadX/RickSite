@@ -1,0 +1,1 @@
+{'role': 'assistant', 'content': 'Let\'s add the EF Core tools to our PATH and then create the migration:\n\n<function_calls>\n<execute-command>\n# Add EF Core tools to PATH\nexport PATH="$PATH:/root/.dotnet/tools"\n\n# Create initial migration\ncd PersonalWebsite\ndotnet-ef migrations add InitialCreate --project PersonalWebsite.Server\n</execute-command>\n</function_calls>'}

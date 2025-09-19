@@ -1,0 +1,61 @@
+# Caddyfile for Personal Website
+
+# Replace example.com with your actual domain in production
+# For local development, you can use localhost
+:80 {
+    # Reverse proxy to the ASP.NET Core application
+    reverse_proxy webapp:80 {
+        # Health checks
+        health_path /health
+        health_interval 30s
+        health_timeout 10s
+        health_status 200
+    }
+
+    # Enable compression
+    encode gzip zstd
+
+    # Set security headers
+    header {
+        # Enable HTTP Strict Transport Security (HSTS)
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        
+        # Prevent MIME type sniffing
+        X-Content-Type-Options "nosniff"
+        
+        # Enable XSS protection
+        X-XSS-Protection "1; mode=block"
+        
+        # Prevent clickjacking
+        X-Frame-Options "SAMEORIGIN"
+        
+        # Control browser features
+        Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+        
+        # Content Security Policy
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*; connect-src 'self'"
+        
+        # Remove Server header
+        -Server
+    }
+
+    # Log requests
+    log {
+        output file /var/log/caddy/access.log
+        format json
+    }
+
+    # Handle errors
+    handle_errors {
+        root * /usr/share/caddy
+        file_server
+    }
+}
+
+# For production with HTTPS, uncomment and modify the following:
+# example.com {
+#     reverse_proxy webapp:80
+#     encode gzip zstd
+#     tls your-email@example.com
+#     # Same headers and other configurations as above
+# }

@@ -1,0 +1,110 @@
+# .NET Core
+*.swp
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.tmp
+*.userprefs
+*.dbmdl
+*.jfm
+*.pfx
+*.publishsettings
+orleans.codegen.cs
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Visual Studio
+.vs/
+.vscode/
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Blazor
+_framework/
+wwwroot/_framework/
+*.blazor.config
+*.blazor.boot.json
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Docker
+.dockerignore
+
+# Caddy
+.caddy/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE files
+.idea/
+*.sln.iml
+*.sw?
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Misc
+node_modules/
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*$py.class

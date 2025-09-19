@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: personalwebsite-app
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/personalwebsite.db
+    volumes:
+      - app-data:/app/data
+    networks:
+      - app-network
+
+  caddy:
+    image: caddy:latest
+    container_name: personalwebsite-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - app-network
+    depends_on:
+      - webapp
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  app-data:
+  caddy-data:
+  caddy-config:

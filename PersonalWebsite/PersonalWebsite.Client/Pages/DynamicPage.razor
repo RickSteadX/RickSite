@@ -1,0 +1,191 @@
+@page "/page/{Slug}"
+@inject PageService PageService
+@inject IJSRuntime JSRuntime
+
+<PageTitle>@(_page?.Title ?? "Loading...") - Alex Morgan</PageTitle>
+
+@if (_loading)
+{
+    <div class="loading-container">
+        <div class="spinner"></div>
+        <p>Loading page...</p>
+    </div>
+}
+else if (_page != null)
+{
+    <div class="dynamic-page">
+        <div class="container">
+            <h1>@_page.Title</h1>
+            
+            @if (!string.IsNullOrEmpty(_page.Description))
+            {
+                <p class="lead">@_page.Description</p>
+            }
+            
+            <div class="page-content">
+                @((MarkupString)_page.Content)
+            </div>
+            
+            @if (_components != null && _components.Any())
+            {
+                <div class="page-components">
+                    @foreach (var component in _components.OrderBy(c => c.Order))
+                    {
+                        <div class="component @component.ComponentType.ToLower()">
+                            @RenderComponent(component)
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="container">
+        <h1>Page Not Found</h1>
+        <p>Sorry, the page you are looking for does not exist or has been moved.</p>
+        <a href="/" class="btn btn-primary">Return to Home</a>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Slug { get; set; }
+    
+    private Page _page;
+    private List<PageComponent> _components;
+    private bool _loading = true;
+    private string _errorMessage;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPageAsync();
+    }
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadPageAsync();
+    }
+    
+    private async Task LoadPageAsync()
+    {
+        try
+        {
+            _loading = true;
+            _page = await PageService.GetPageBySlugAsync(Slug);
+            
+            if (_page != null)
+            {
+                _components = await PageService.GetPageComponentsAsync(_page.Id);
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = ex.Message;
+            _page = null;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+    
+    private RenderFragment RenderComponent(PageComponent component) => builder =>
+    {
+        switch (component.ComponentType.ToLower())
+        {
+            case "text":
+                builder.AddMarkupContent(0, component.Content);
+                break;
+                
+            case "image":
+                var props = component.GetProperties<ImageComponentProps>();
+                builder.OpenElement(0, "img");
+                builder.AddAttribute(1, "src", props.Src);
+                builder.AddAttribute(2, "alt", props.Alt);
+                builder.AddAttribute(3, "class", "img-fluid");
+                if (!string.IsNullOrEmpty(props.Width))
+                {
+                    builder.AddAttribute(4, "width", props.Width);
+                }
+                if (!string.IsNullOrEmpty(props.Height))
+                {
+                    builder.AddAttribute(5, "height", props.Height);
+                }
+                builder.CloseElement();
+                break;
+                
+            case "video":
+                var videoProps = component.GetProperties<VideoComponentProps>();
+                builder.OpenElement(0, "div");
+                builder.AddAttribute(1, "class", "video-container");
+                builder.OpenElement(2, "iframe");
+                builder.AddAttribute(3, "src", videoProps.Src);
+                builder.AddAttribute(4, "width", "100%");
+                builder.AddAttribute(5, "height", "400");
+                builder.AddAttribute(6, "frameborder", "0");
+                builder.AddAttribute(7, "allowfullscreen", true);
+                builder.CloseElement();
+                builder.CloseElement();
+                break;
+                
+            case "gallery":
+                var galleryProps = component.GetProperties<GalleryComponentProps>();
+                builder.OpenElement(0, "div");
+                builder.AddAttribute(1, "class", "gallery");
+                
+                foreach (var image in galleryProps.Images)
+                {
+                    builder.OpenElement(2, "div");
+                    builder.AddAttribute(3, "class", "gallery-item");
+                    builder.OpenElement(4, "img");
+                    builder.AddAttribute(5, "src", image.Src);
+                    builder.AddAttribute(6, "alt", image.Alt);
+                    builder.AddAttribute(7, "class", "img-fluid");
+                    builder.CloseElement();
+                    builder.CloseElement();
+                }
+                
+                builder.CloseElement();
+                break;
+                
+            default:
+                builder.AddMarkupContent(0, component.Content);
+                break;
+        }
+    };
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializeApp");
+        }
+    }
+    
+    private class ImageComponentProps
+    {
+        public string Src { get; set; }
+        public string Alt { get; set; }
+        public string Width { get; set; }
+        public string Height { get; set; }
+    }
+    
+    private class VideoComponentProps
+    {
+        public string Src { get; set; }
+        public string Title { get; set; }
+    }
+    
+    private class GalleryComponentProps
+    {
+        public List<GalleryImage> Images { get; set; } = new List<GalleryImage>();
+    }
+    
+    private class GalleryImage
+    {
+        public string Src { get; set; }
+        public string Alt { get; set; }
+    }
+}

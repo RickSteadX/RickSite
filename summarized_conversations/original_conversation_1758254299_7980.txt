@@ -1,0 +1,1 @@
+{'role': 'assistant', 'content': "Perfect! Now let's install Caddy web server using Podman:\n\n<function_calls>\n<execute-command>\n# Pull Caddy image\npodman pull docker.io/caddy:latest\n</execute-command>\n</function_calls>"}

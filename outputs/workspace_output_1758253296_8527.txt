@@ -1,0 +1,102 @@
+Build started...
+Build succeeded.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      PRAGMA journal_mode = 'wal';
+info: Microsoft.EntityFrameworkCore.Migrations[20411]
+      Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsLock' AND "type" = 'table';
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE IF NOT EXISTS "__EFMigrationsLock" (
+          "Id" INTEGER NOT NULL CONSTRAINT "PK___EFMigrationsLock" PRIMARY KEY,
+          "Timestamp" TEXT NOT NULL
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT OR IGNORE INTO "__EFMigrationsLock"("Id", "Timestamp") VALUES(1, '2025-09-19 03:41:40.7842152+00:00');
+      SELECT changes();
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+          "MigrationId" TEXT NOT NULL CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY,
+          "ProductVersion" TEXT NOT NULL
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT COUNT(*) FROM "sqlite_master" WHERE "name" = '__EFMigrationsHistory' AND "type" = 'table';
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "MigrationId", "ProductVersion"
+      FROM "__EFMigrationsHistory"
+      ORDER BY "MigrationId";
+info: Microsoft.EntityFrameworkCore.Migrations[20402]
+      Applying migration '20250919034128_InitialCreate'.
+Applying migration '20250919034128_InitialCreate'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE "Pages" (
+          "Id" INTEGER NOT NULL CONSTRAINT "PK_Pages" PRIMARY KEY AUTOINCREMENT,
+          "Title" TEXT NOT NULL,
+          "Slug" TEXT NOT NULL,
+          "Description" TEXT NOT NULL,
+          "Content" TEXT NOT NULL,
+          "IsPublished" INTEGER NOT NULL,
+          "CreatedAt" TEXT NOT NULL,
+          "UpdatedAt" TEXT NULL,
+          "PublishedAt" TEXT NULL,
+          "Order" INTEGER NOT NULL,
+          "ShowInNavigation" INTEGER NOT NULL,
+          "LayoutJson" TEXT NOT NULL
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE "Users" (
+          "Id" INTEGER NOT NULL CONSTRAINT "PK_Users" PRIMARY KEY AUTOINCREMENT,
+          "Username" TEXT NOT NULL,
+          "PasswordHash" TEXT NOT NULL,
+          "Email" TEXT NOT NULL,
+          "FirstName" TEXT NOT NULL,
+          "LastName" TEXT NOT NULL,
+          "CreatedAt" TEXT NOT NULL,
+          "LastLogin" TEXT NULL
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE "PageComponents" (
+          "Id" INTEGER NOT NULL CONSTRAINT "PK_PageComponents" PRIMARY KEY AUTOINCREMENT,
+          "PageId" INTEGER NOT NULL,
+          "ComponentType" TEXT NOT NULL,
+          "Content" TEXT NOT NULL,
+          "StyleJson" TEXT NOT NULL,
+          "Order" INTEGER NOT NULL,
+          "PropertiesJson" TEXT NOT NULL,
+          CONSTRAINT "FK_PageComponents_Pages_PageId" FOREIGN KEY ("PageId") REFERENCES "Pages" ("Id") ON DELETE CASCADE
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "Pages" ("Id", "Content", "CreatedAt", "Description", "IsPublished", "LayoutJson", "Order", "PublishedAt", "ShowInNavigation", "Slug", "Title", "UpdatedAt")
+      VALUES (1, '<h1>Welcome to My Personal Website</h1><p>This is the home page content.</p>', '2025-01-01 00:00:00', 'Welcome to Alex Morgan''s personal website', 1, '{"sections":[{"id":"hero","name":"Hero Section","type":"hero"},{"id":"about","name":"About Section","type":"content"},{"id":"portfolio","name":"Portfolio Section","type":"grid"}]}', 1, '2025-01-01 00:00:00', 1, 'home', 'Home', NULL);
+      SELECT changes();
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "Users" ("Id", "CreatedAt", "Email", "FirstName", "LastLogin", "LastName", "PasswordHash", "Username")
+      VALUES (1, '2025-01-01 00:00:00', 'admin@example.com', 'Admin', NULL, 'User', 'AQAAAAIAAYagAAAAELTsZ4S3rD1+Qm+QFQgYZdtLGFUGKQj8yAMRwRgdJvN3FJMJnCJfYXFcVXp+YOqZdw==', 'admin');
+      SELECT changes();
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX "IX_PageComponents_PageId" ON "PageComponents" ("PageId");
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE UNIQUE INDEX "IX_Pages_Slug" ON "Pages" ("Slug");
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+      VALUES ('20250919034128_InitialCreate', '9.0.9');
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      DELETE FROM "__EFMigrationsLock";
+Done.

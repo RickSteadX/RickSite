@@ -1,0 +1,1 @@
+{'role': 'assistant', 'content': "Now let's update the Program.cs file in the client project to register our services:\n\n<function_calls>\n<execute-command>\n# Check the content of the existing Program.cs file in the client project\ncat PersonalWebsite/PersonalWebsite.Client/Program.cs\n</execute-command>\n</function_calls>"}

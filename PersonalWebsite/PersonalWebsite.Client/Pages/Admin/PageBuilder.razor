@@ -1,0 +1,451 @@
+@page "/admin/page-builder"
+@page "/admin/page-builder/{PageId:int}"
+@attribute [Authorize]
+@layout AdminLayout
+@inject PageService PageService
+@inject PageComponentService ComponentService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Page Builder - Admin Dashboard</PageTitle>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Page Builder</h1>
+        <div>
+            <button class="btn btn-outline-secondary me-2" @onclick="NavigateBack">Cancel</button>
+            <button class="btn btn-primary" @onclick="SavePageAsync" disabled="@_isSaving">
+                @if (_isSaving)
+                {
+                    <span>Saving...</span>
+                }
+                else
+                {
+                    <span>Save Page</span>
+                }
+            </button>
+        </div>
+    </div>
+    
+    @if (_loading)
+    {
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <p>Loading page builder...</p>
+        </div>
+    }
+    else if (_page != null)
+    {
+        <div class="page-builder">
+            <div class="component-sidebar">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5>Page Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group mb-3">
+                            <label for="title" class="form-label">Page Title</label>
+                            <input id="title" @bind="_page.Title" class="form-control" />
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="slug" class="form-label">Page Slug</label>
+                            <div class="input-group">
+                                <span class="input-group-text">/page/</span>
+                                <input id="slug" @bind="_page.Slug" class="form-control" />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <div class="form-check form-switch">
+                                <input id="isPublished" @bind="_page.IsPublished" type="checkbox" class="form-check-input" />
+                                <label for="isPublished" class="form-check-label">Published</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5>Components</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Drag components to add them to your page:</p>
+                        
+                        <div class="component-item" draggable="true" @ondragstart="() => HandleDragStart('text')">
+                            <h5>Text Block</h5>
+                            <p>Add paragraphs, headings, and formatted text.</p>
+                        </div>
+                        
+                        <div class="component-item" draggable="true" @ondragstart="() => HandleDragStart('image')">
+                            <h5>Image</h5>
+                            <p>Add a single image with optional caption.</p>
+                        </div>
+                        
+                        <div class="component-item" draggable="true" @ondragstart="() => HandleDragStart('gallery')">
+                            <h5>Gallery</h5>
+                            <p>Add a collection of images in a grid layout.</p>
+                        </div>
+                        
+                        <div class="component-item" draggable="true" @ondragstart="() => HandleDragStart('video')">
+                            <h5>Video</h5>
+                            <p>Embed a video from YouTube or Vimeo.</p>
+                        </div>
+                        
+                        <div class="component-item" draggable="true" @ondragstart="() => HandleDragStart('button')">
+                            <h5>Button</h5>
+                            <p>Add a call-to-action button.</p>
+                        </div>
+                        
+                        <div class="component-item" draggable="true" @ondragstart="() => HandleDragStart('divider')">
+                            <h5>Divider</h5>
+                            <p>Add a horizontal line to separate content.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="canvas-area" 
+                 @ondragover:preventDefault
+                 @ondragover="HandleDragOver"
+                 @ondrop:preventDefault
+                 @ondrop="HandleDrop">
+                
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5>Page Content</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group mb-3">
+                            <label for="content" class="form-label">Main Content</label>
+                            <textarea id="content" @bind="_page.Content" class="form-control" rows="10"></textarea>
+                            <small class="form-text text-muted">You can use HTML tags for formatting.</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Page Components</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (_components != null && _components.Any())
+                        {
+                            <div class="components-list">
+                                @foreach (var component in _components.OrderBy(c => c.Order))
+                                {
+                                    <div class="component-wrapper mb-3">
+                                        <div class="component-header d-flex justify-content-between align-items-center">
+                                            <h6>@component.ComponentType Component</h6>
+                                            <div>
+                                                <button class="btn btn-sm btn-outline-secondary me-1" @onclick="() => EditComponent(component)">Edit</button>
+                                                <button class="btn btn-sm btn-danger" @onclick="() => DeleteComponent(component)">Delete</button>
+                                            </div>
+                                        </div>
+                                        <div class="component-preview p-3 border rounded">
+                                            @switch (component.ComponentType.ToLower())
+                                            {
+                                                case "text":
+                                                    <div>@((MarkupString)component.Content)</div>
+                                                    break;
+                                                case "image":
+                                                    <div class="text-center">
+                                                        <img src="@GetImageSrc(component)" alt="Image component" class="img-fluid" style="max-height: 200px;" />
+                                                    </div>
+                                                    break;
+                                                case "video":
+                                                    <div class="text-center">
+                                                        <div class="ratio ratio-16x9">
+                                                            <iframe src="@GetVideoSrc(component)" allowfullscreen></iframe>
+                                                        </div>
+                                                    </div>
+                                                    break;
+                                                case "gallery":
+                                                    <div class="text-center">
+                                                        <p>[Gallery Component - @GetGalleryImageCount(component) images]</p>
+                                                    </div>
+                                                    break;
+                                                case "button":
+                                                    <div class="text-center">
+                                                        <button class="btn btn-primary" disabled>@GetButtonText(component)</button>
+                                                    </div>
+                                                    break;
+                                                case "divider":
+                                                    <hr />
+                                                    break;
+                                                default:
+                                                    <div>@component.Content</div>
+                                                    break;
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="dropzone @(_isDraggingOver ? "active" : "")">
+                                <p class="text-center my-5">Drag components here to add them to your page</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            <p>No page selected. Please <a href="/admin/pages">select a page</a> to edit or <a href="/admin/pages/create">create a new page</a>.</p>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int? PageId { get; set; }
+    
+    private Page _page;
+    private List<PageComponent> _components = new List<PageComponent>();
+    private bool _loading = true;
+    private bool _isSaving = false;
+    private bool _isDraggingOver = false;
+    private string _draggedComponentType;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPageAsync();
+    }
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        if (PageId != null)
+        {
+            await LoadPageAsync();
+        }
+    }
+    
+    private async Task LoadPageAsync()
+    {
+        try
+        {
+            _loading = true;
+            
+            if (PageId.HasValue)
+            {
+                _page = await PageService.GetPageAsync(PageId.Value);
+                _components = await ComponentService.GetPageComponentsAsync(PageId.Value);
+            }
+            else
+            {
+                // Create a temporary page for the builder
+                _page = new Page
+                {
+                    Title = "New Page",
+                    Slug = "new-page",
+                    Content = "<h1>New Page</h1><p>Enter your content here...</p>",
+                    CreatedAt = DateTime.UtcNow,
+                    IsPublished = false
+                };
+                _components = new List<PageComponent>();
+            }
+        }
+        catch (Exception)
+        {
+            NavigationManager.NavigateTo("/admin/pages");
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+    
+    private void HandleDragStart(string componentType)
+    {
+        _draggedComponentType = componentType;
+    }
+    
+    private void HandleDragOver()
+    {
+        _isDraggingOver = true;
+    }
+    
+    private async Task HandleDrop()
+    {
+        _isDraggingOver = false;
+        
+        if (string.IsNullOrEmpty(_draggedComponentType))
+            return;
+            
+        if (_page.Id == 0)
+        {
+            // Save the page first if it's new
+            try
+            {
+                _page = await PageService.CreatePageAsync(_page);
+                PageId = _page.Id;
+            }
+            catch
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Please save the page before adding components.");
+                return;
+            }
+        }
+        
+        // Create a new component based on the dragged type
+        var component = new PageComponent
+        {
+            PageId = _page.Id,
+            ComponentType = _draggedComponentType,
+            Order = _components.Count > 0 ? _components.Max(c => c.Order) + 1 : 0
+        };
+        
+        // Set default content based on component type
+        switch (_draggedComponentType.ToLower())
+        {
+            case "text":
+                component.Content = "<p>Enter your text here...</p>";
+                break;
+            case "image":
+                component.Content = "";
+                component.SetProperties(new { Src = "https://via.placeholder.com/800x400", Alt = "Image description" });
+                break;
+            case "gallery":
+                component.Content = "";
+                component.SetProperties(new { 
+                    Images = new[] {
+                        new { Src = "https://via.placeholder.com/400x300", Alt = "Gallery image 1" },
+                        new { Src = "https://via.placeholder.com/400x300", Alt = "Gallery image 2" },
+                        new { Src = "https://via.placeholder.com/400x300", Alt = "Gallery image 3" }
+                    }
+                });
+                break;
+            case "video":
+                component.Content = "";
+                component.SetProperties(new { Src = "https://www.youtube.com/embed/dQw4w9WgXcQ", Title = "Video title" });
+                break;
+            case "button":
+                component.Content = "Click Me";
+                component.SetProperties(new { Url = "#", Style = "primary" });
+                break;
+            case "divider":
+                component.Content = "";
+                break;
+        }
+        
+        try
+        {
+            var savedComponent = await ComponentService.CreatePageComponentAsync(component);
+            _components.Add(savedComponent);
+        }
+        catch
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Failed to add component. Please try again.");
+        }
+        
+        _draggedComponentType = null;
+    }
+    
+    private async Task EditComponent(PageComponent component)
+    {
+        // In a real implementation, this would open a modal or editor for the component
+        await JSRuntime.InvokeVoidAsync("alert", "Component editing would open here in a real implementation.");
+    }
+    
+    private async Task DeleteComponent(PageComponent component)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this component?");
+        
+        if (confirmed)
+        {
+            try
+            {
+                await ComponentService.DeletePageComponentAsync(component.Id);
+                _components.Remove(component);
+            }
+            catch
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Failed to delete component. Please try again.");
+            }
+        }
+    }
+    
+    private async Task SavePageAsync()
+    {
+        try
+        {
+            _isSaving = true;
+            
+            if (_page.Id == 0)
+            {
+                _page = await PageService.CreatePageAsync(_page);
+                PageId = _page.Id;
+                NavigationManager.NavigateTo($"/admin/page-builder/{_page.Id}");
+            }
+            else
+            {
+                await PageService.UpdatePageAsync(_page.Id, _page);
+            }
+            
+            await JSRuntime.InvokeVoidAsync("alert", "Page saved successfully!");
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Failed to save page: {ex.Message}");
+        }
+        finally
+        {
+            _isSaving = false;
+        }
+    }
+    
+    private void NavigateBack()
+    {
+        NavigationManager.NavigateTo("/admin/pages");
+    }
+    
+    private string GetImageSrc(PageComponent component)
+    {
+        try
+        {
+            var props = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(component.PropertiesJson);
+            return props["Src"].ToString();
+        }
+        catch
+        {
+            return "https://via.placeholder.com/800x400";
+        }
+    }
+    
+    private string GetVideoSrc(PageComponent component)
+    {
+        try
+        {
+            var props = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(component.PropertiesJson);
+            return props["Src"].ToString();
+        }
+        catch
+        {
+            return "https://www.youtube.com/embed/dQw4w9WgXcQ";
+        }
+    }
+    
+    private int GetGalleryImageCount(PageComponent component)
+    {
+        try
+        {
+            var props = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(component.PropertiesJson);
+            var images = System.Text.Json.JsonSerializer.Deserialize<object[]>(props["Images"].ToString());
+            return images.Length;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+    
+    private string GetButtonText(PageComponent component)
+    {
+        return string.IsNullOrEmpty(component.Content) ? "Button" : component.Content;
+    }
+}

@@ -1,0 +1,197 @@
+@page "/"
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Alex Morgan - Full Stack Developer & UX Designer</PageTitle>
+
+<div class="hero">
+    <div id="particles-js" class="hero-bg"></div>
+    <div class="hero-content">
+        <h1>Alex Morgan</h1>
+        <p>Full Stack Developer & UX Designer</p>
+        <div>
+            <a href="/page/about" class="btn btn-primary">About Me</a>
+            <a href="/page/portfolio" class="btn btn-secondary">View Portfolio</a>
+        </div>
+    </div>
+</div>
+
+<section class="container">
+    <h2>Featured Projects</h2>
+    <div class="row">
+        @foreach (var project in _featuredProjects)
+        {
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>@project.Title</h3>
+                        <p>@project.Description</p>
+                        <a href="@project.Url" class="btn btn-primary">View Project</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<section class="container">
+    <h2>Skills</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Front-end</h3>
+                    <ul>
+                        <li>React</li>
+                        <li>Angular</li>
+                        <li>Vue.js</li>
+                        <li>Blazor</li>
+                        <li>HTML/CSS/JavaScript</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Back-end</h3>
+                    <ul>
+                        <li>ASP.NET Core</li>
+                        <li>Node.js</li>
+                        <li>Python/Django</li>
+                        <li>RESTful APIs</li>
+                        <li>GraphQL</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h3>UX/UI Design</h3>
+                    <ul>
+                        <li>Figma</li>
+                        <li>Adobe XD</li>
+                        <li>User Research</li>
+                        <li>Wireframing</li>
+                        <li>Prototyping</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container">
+    <h2>Latest Blog Posts</h2>
+    <div class="row">
+        @foreach (var post in _latestPosts)
+        {
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>@post.Title</h3>
+                        <p>@post.Date.ToString("MMMM d, yyyy")</p>
+                        <p>@post.Excerpt</p>
+                        <a href="@post.Url" class="btn btn-primary">Read More</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<section class="container">
+    <h2>Contact Me</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="Your Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="your.email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" rows="5" placeholder="Your message..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Get in Touch</h3>
+                    <p>I'm always open to new opportunities and collaborations. Feel free to reach out!</p>
+                    <p><strong>Email:</strong> alex@morgantech.dev</p>
+                    <p><strong>Location:</strong> San Francisco, CA</p>
+                    <div class="social-links">
+                        <a href="https://github.com/alexmorgan" target="_blank" rel="noopener noreferrer">GitHub</a> |
+                        <a href="https://linkedin.com/in/alexmorgan" target="_blank" rel="noopener noreferrer">LinkedIn</a> |
+                        <a href="https://twitter.com/alexmorgan" target="_blank" rel="noopener noreferrer">Twitter</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private List<Project> _featuredProjects = new List<Project>
+    {
+        new Project { Title = "Eco Tracker", Description = "Sustainability monitoring dashboard with real-time analytics.", Url = "/portfolio/eco-tracker" },
+        new Project { Title = "FinFlow", Description = "Personal finance management application with budgeting tools.", Url = "/portfolio/finflow" },
+        new Project { Title = "MediaStream", Description = "Content delivery platform with advanced streaming capabilities.", Url = "/portfolio/mediastream" }
+    };
+
+    private List<BlogPost> _latestPosts = new List<BlogPost>
+    {
+        new BlogPost { 
+            Title = "The Future of Web Components", 
+            Date = new DateTime(2025, 8, 15), 
+            Excerpt = "Exploring how web components are changing front-end development...", 
+            Url = "/blog/future-of-web-components" 
+        },
+        new BlogPost { 
+            Title = "Optimizing Database Performance", 
+            Date = new DateTime(2025, 7, 28), 
+            Excerpt = "Tips and tricks for improving your database queries and structure...", 
+            Url = "/blog/optimizing-database-performance" 
+        },
+        new BlogPost { 
+            Title = "UX Design Principles for Developers", 
+            Date = new DateTime(2025, 7, 10), 
+            Excerpt = "How developers can incorporate UX design principles into their work...", 
+            Url = "/blog/ux-design-principles-for-developers" 
+        }
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializeApp");
+        }
+    }
+
+    private class Project
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string Url { get; set; }
+    }
+
+    private class BlogPost
+    {
+        public string Title { get; set; }
+        public DateTime Date { get; set; }
+        public string Excerpt { get; set; }
+        public string Url { get; set; }
+    }
+}

@@ -1,0 +1,8 @@
+Build started...
+Build succeeded.
+Removing migration '20250919034045_InitialCreate'.
+Removing model snapshot.
+Done.
+Build started...
+Build succeeded.
+Done. To undo this action, use 'ef migrations remove'

@@ -1,0 +1,11 @@
+total 108
+drwxr-xr-x 6 root root  4096 Sep 19 04:04 .
+drwxr-xr-x 1 root root   152 Sep 19 03:36 ..
+drwxr-xr-x 7 root root   155 Sep 19 04:04 .git
+drwxr-xr-x 5 root root  4096 Sep 19 03:56 PersonalWebsite
+-rwxr-xr-x 1 root root 63644 Jun 16 18:28 dotnet-install.sh
+drwxr-xr-x 2 root root  4096 Sep 19 04:04 outputs
+-rw-r--r-- 1 root root  1711 Sep 19 03:34 persona.md
+drwxr-xr-x 2 root root 12288 Sep 19 03:59 summarized_conversations
+-rw-r--r-- 1 root root  2093 Sep 19 03:56 todo.md
+-rw-r--r-- 1 root root  5950 Sep 19 03:35 wireframes.md

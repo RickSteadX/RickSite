@@ -1,0 +1,1 @@
+{'role': 'assistant', 'content': "Let's try a different approach by installing the EF Core tools as a local tool:\n\n<function_calls>\n<execute-command>\n# Create a tool manifest\ncd PersonalWebsite\n$HOME/.dotnet/dotnet new tool-manifest\n\n# Install EF Core tools locally\n$HOME/.dotnet/dotnet tool install dotnet-ef\n</execute-command>\n</function_calls>"}

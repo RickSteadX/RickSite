@@ -1,0 +1,134 @@
+@page "/admin/pages"
+@attribute [Authorize]
+@layout AdminLayout
+@inject PageService PageService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Manage Pages - Admin Dashboard</PageTitle>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Manage Pages</h1>
+        <a href="/admin/pages/create" class="btn btn-primary">Create New Page</a>
+    </div>
+    
+    @if (_loading)
+    {
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <p>Loading pages...</p>
+        </div>
+    }
+    else if (_pages != null && _pages.Any())
+    {
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Slug</th>
+                                <th>Status</th>
+                                <th>Navigation</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var page in _pages.OrderBy(p => p.Order))
+                            {
+                                <tr>
+                                    <td>@page.Title</td>
+                                    <td>@page.Slug</td>
+                                    <td>
+                                        @if (page.IsPublished)
+                                        {
+                                            <span class="badge bg-success">Published</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Draft</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (page.ShowInNavigation)
+                                        {
+                                            <span class="badge bg-info">Visible</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Hidden</span>
+                                        }
+                                    </td>
+                                    <td>@page.CreatedAt.ToString("MMM d, yyyy")</td>
+                                    <td>@(page.UpdatedAt?.ToString("MMM d, yyyy") ?? "-")</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="/admin/pages/edit/@page.Id" class="btn btn-sm btn-primary">Edit</a>
+                                            <a href="/page/@page.Slug" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+                                            <button class="btn btn-sm btn-danger" @onclick="() => DeletePageAsync(page)">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <p>No pages found. <a href="/admin/pages/create">Create your first page</a>.</p>
+        </div>
+    }
+</div>
+
+@code {
+    private List<Page> _pages;
+    private bool _loading = true;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPagesAsync();
+    }
+    
+    private async Task LoadPagesAsync()
+    {
+        try
+        {
+            _loading = true;
+            _pages = await PageService.GetAllPagesAsync();
+        }
+        catch (Exception)
+        {
+            _pages = new List<Page>();
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+    
+    private async Task DeletePageAsync(Page page)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete the page '{page.Title}'? This action cannot be undone.");
+        
+        if (confirmed)
+        {
+            try
+            {
+                await PageService.DeletePageAsync(page.Id);
+                _pages.Remove(page);
+            }
+            catch (Exception)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Failed to delete the page. Please try again.");
+            }
+        }
+    }
+}

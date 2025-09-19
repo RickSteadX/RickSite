@@ -1,0 +1,307 @@
+@page "/admin/settings"
+@attribute [Authorize]
+@layout AdminLayout
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Settings - Admin Dashboard</PageTitle>
+
+<div class="container">
+    <h1>Settings</h1>
+    
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>General Settings</h3>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="form-group mb-3">
+                            <label for="siteName" class="form-label">Site Name</label>
+                            <input type="text" class="form-control" id="siteName" @bind="_settings.SiteName" />
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="siteDescription" class="form-label">Site Description</label>
+                            <textarea class="form-control" id="siteDescription" rows="3" @bind="_settings.SiteDescription"></textarea>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="contactEmail" class="form-label">Contact Email</label>
+                            <input type="email" class="form-control" id="contactEmail" @bind="_settings.ContactEmail" />
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="footerText" class="form-label">Footer Text</label>
+                            <input type="text" class="form-control" id="footerText" @bind="_settings.FooterText" />
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary" @onclick="SaveGeneralSettings">Save General Settings</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Social Media Links</h3>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="form-group mb-3">
+                            <label for="github" class="form-label">GitHub URL</label>
+                            <input type="text" class="form-control" id="github" @bind="_settings.SocialLinks.GitHub" />
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="linkedin" class="form-label">LinkedIn URL</label>
+                            <input type="text" class="form-control" id="linkedin" @bind="_settings.SocialLinks.LinkedIn" />
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="twitter" class="form-label">Twitter URL</label>
+                            <input type="text" class="form-control" id="twitter" @bind="_settings.SocialLinks.Twitter" />
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="instagram" class="form-label">Instagram URL</label>
+                            <input type="text" class="form-control" id="instagram" @bind="_settings.SocialLinks.Instagram" />
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary" @onclick="SaveSocialLinks">Save Social Links</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Theme Settings</h3>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="form-group mb-3">
+                            <label for="primaryColor" class="form-label">Primary Color</label>
+                            <div class="input-group">
+                                <input type="color" class="form-control form-control-color" id="primaryColor" @bind="_settings.ThemeSettings.PrimaryColor" />
+                                <input type="text" class="form-control" @bind="_settings.ThemeSettings.PrimaryColor" />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="secondaryColor" class="form-label">Secondary Color</label>
+                            <div class="input-group">
+                                <input type="color" class="form-control form-control-color" id="secondaryColor" @bind="_settings.ThemeSettings.SecondaryColor" />
+                                <input type="text" class="form-control" @bind="_settings.ThemeSettings.SecondaryColor" />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="accentColor" class="form-label">Accent Color</label>
+                            <div class="input-group">
+                                <input type="color" class="form-control form-control-color" id="accentColor" @bind="_settings.ThemeSettings.AccentColor" />
+                                <input type="text" class="form-control" @bind="_settings.ThemeSettings.AccentColor" />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="fontHeading" class="form-label">Heading Font</label>
+                            <select class="form-select" id="fontHeading" @bind="_settings.ThemeSettings.HeadingFont">
+                                <option value="Montserrat">Montserrat</option>
+                                <option value="Roboto">Roboto</option>
+                                <option value="Open Sans">Open Sans</option>
+                                <option value="Lato">Lato</option>
+                                <option value="Poppins">Poppins</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="fontBody" class="form-label">Body Font</label>
+                            <select class="form-select" id="fontBody" @bind="_settings.ThemeSettings.BodyFont">
+                                <option value="Open Sans">Open Sans</option>
+                                <option value="Roboto">Roboto</option>
+                                <option value="Lato">Lato</option>
+                                <option value="Nunito">Nunito</option>
+                                <option value="Source Sans Pro">Source Sans Pro</option>
+                            </select>
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary" @onclick="SaveThemeSettings">Save Theme Settings</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Account Settings</h3>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="form-group mb-3">
+                            <label for="currentPassword" class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" @bind="_passwordChange.CurrentPassword" />
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" @bind="_passwordChange.NewPassword" />
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" @bind="_passwordChange.ConfirmPassword" />
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary" @onclick="ChangePassword">Change Password</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>System Information</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Version:</strong> 1.0.0</p>
+                    <p><strong>Last Updated:</strong> @DateTime.Now.ToString("MMMM d, yyyy")</p>
+                    <p><strong>Database:</strong> SQLite</p>
+                    <p><strong>Storage:</strong> Local</p>
+                    
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="button" class="btn btn-outline-primary" @onclick="ClearCache">Clear Cache</button>
+                        <button type="button" class="btn btn-outline-danger" @onclick="ResetSystem">Reset System</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private SiteSettings _settings = new SiteSettings
+    {
+        SiteName = "Alex Morgan",
+        SiteDescription = "Full Stack Developer & UX Designer",
+        ContactEmail = "alex@morgantech.dev",
+        FooterText = "© 2025 Alex Morgan. All rights reserved.",
+        SocialLinks = new SocialLinks
+        {
+            GitHub = "https://github.com/alexmorgan",
+            LinkedIn = "https://linkedin.com/in/alexmorgan",
+            Twitter = "https://twitter.com/alexmorgan",
+            Instagram = "https://instagram.com/alexmorgan"
+        },
+        ThemeSettings = new ThemeSettings
+        {
+            PrimaryColor = "#3498db",
+            SecondaryColor = "#2ecc71",
+            AccentColor = "#e74c3c",
+            HeadingFont = "Montserrat",
+            BodyFont = "Open Sans"
+        }
+    };
+    
+    private PasswordChange _passwordChange = new PasswordChange();
+    
+    private async Task SaveGeneralSettings()
+    {
+        // In a real implementation, this would save to a database or API
+        await JSRuntime.InvokeVoidAsync("alert", "General settings saved successfully!");
+    }
+    
+    private async Task SaveSocialLinks()
+    {
+        // In a real implementation, this would save to a database or API
+        await JSRuntime.InvokeVoidAsync("alert", "Social links saved successfully!");
+    }
+    
+    private async Task SaveThemeSettings()
+    {
+        // In a real implementation, this would save to a database or API
+        await JSRuntime.InvokeVoidAsync("alert", "Theme settings saved successfully!");
+    }
+    
+    private async Task ChangePassword()
+    {
+        // Validate password change
+        if (string.IsNullOrEmpty(_passwordChange.CurrentPassword))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Please enter your current password.");
+            return;
+        }
+        
+        if (string.IsNullOrEmpty(_passwordChange.NewPassword))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Please enter a new password.");
+            return;
+        }
+        
+        if (_passwordChange.NewPassword != _passwordChange.ConfirmPassword)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "New password and confirmation do not match.");
+            return;
+        }
+        
+        // In a real implementation, this would validate and change the password
+        await JSRuntime.InvokeVoidAsync("alert", "Password changed successfully!");
+        
+        // Reset form
+        _passwordChange = new PasswordChange();
+    }
+    
+    private async Task ClearCache()
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to clear the cache? This will refresh all data from the server.");
+        
+        if (confirmed)
+        {
+            // In a real implementation, this would clear the cache
+            await JSRuntime.InvokeVoidAsync("alert", "Cache cleared successfully!");
+        }
+    }
+    
+    private async Task ResetSystem()
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "WARNING: This will reset the entire system to default settings. All custom data will be lost. Are you sure you want to proceed?");
+        
+        if (confirmed)
+        {
+            // In a real implementation, this would reset the system
+            await JSRuntime.InvokeVoidAsync("alert", "System reset initiated. The application will restart shortly.");
+        }
+    }
+    
+    private class SiteSettings
+    {
+        public string SiteName { get; set; }
+        public string SiteDescription { get; set; }
+        public string ContactEmail { get; set; }
+        public string FooterText { get; set; }
+        public SocialLinks SocialLinks { get; set; } = new SocialLinks();
+        public ThemeSettings ThemeSettings { get; set; } = new ThemeSettings();
+    }
+    
+    private class SocialLinks
+    {
+        public string GitHub { get; set; }
+        public string LinkedIn { get; set; }
+        public string Twitter { get; set; }
+        public string Instagram { get; set; }
+    }
+    
+    private class ThemeSettings
+    {
+        public string PrimaryColor { get; set; }
+        public string SecondaryColor { get; set; }
+        public string AccentColor { get; set; }
+        public string HeadingFont { get; set; }
+        public string BodyFont { get; set; }
+    }
+    
+    private class PasswordChange
+    {
+        public string CurrentPassword { get; set; }
+        public string NewPassword { get; set; }
+        public string ConfirmPassword { get; set; }
+    }
+}

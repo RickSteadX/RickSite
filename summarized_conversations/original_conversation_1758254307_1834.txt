@@ -1,0 +1,1 @@
+{'role': 'assistant', 'content': "Now let's configure the database in the server's Program.cs file:\n\n<function_calls>\n<execute-command>\n# Check the content of the existing Program.cs file\ncat PersonalWebsite/PersonalWebsite.Server/Program.cs\n</execute-command>\n</function_calls>"}

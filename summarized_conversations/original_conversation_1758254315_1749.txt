@@ -1,0 +1,1 @@
+{'role': 'assistant', 'content': 'We need to install the Entity Framework Core tools globally first:\n\n<function_calls>\n<execute-command>\n# Install EF Core tools globally\n$HOME/.dotnet/dotnet tool install --global dotnet-ef\n</execute-command>\n</function_calls>'}

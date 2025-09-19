@@ -1,0 +1,1 @@
+{'role': 'assistant', 'content': 'Perfect! We have .NET SDK 8.0.414 installed. Now let\'s check if Podman is installed and install it if needed:\n\n<function_calls>\n<execute-command>\n# Check if Podman is installed\npodman --version || echo "Podman is not installed"\n</execute-command>\n</function_calls>'}

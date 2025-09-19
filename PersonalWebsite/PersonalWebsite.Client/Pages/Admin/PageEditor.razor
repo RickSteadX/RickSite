@@ -1,0 +1,261 @@
+@page "/admin/pages/create"
+@page "/admin/pages/edit/{Id:int}"
+@attribute [Authorize]
+@layout AdminLayout
+@inject PageService PageService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<PageTitle>@(_isNewPage ? "Create Page" : "Edit Page") - Admin Dashboard</PageTitle>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>@(_isNewPage ? "Create New Page" : $"Edit Page: {_page.Title}")</h1>
+        <div>
+            <button class="btn btn-outline-secondary me-2" @onclick="NavigateBack">Cancel</button>
+            <button class="btn btn-primary" @onclick="SavePageAsync" disabled="@_isSaving">
+                @if (_isSaving)
+                {
+                    <span>Saving...</span>
+                }
+                else
+                {
+                    <span>Save Page</span>
+                }
+            </button>
+        </div>
+    </div>
+    
+    @if (_loading)
+    {
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <p>Loading page data...</p>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-body">
+                <EditForm Model="@_page" OnValidSubmit="SavePageAsync">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group mb-3">
+                                <label for="title" class="form-label">Page Title</label>
+                                <InputText id="title" @bind-Value="_page.Title" class="form-control" />
+                                <ValidationMessage For="@(() => _page.Title)" />
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="slug" class="form-label">Page Slug</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">/page/</span>
+                                    <InputText id="slug" @bind-Value="_page.Slug" class="form-control" />
+                                </div>
+                                <ValidationMessage For="@(() => _page.Slug)" />
+                                <small class="form-text text-muted">The slug is used in the URL: https://example.com/page/your-slug</small>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <InputTextArea id="description" @bind-Value="_page.Description" class="form-control" rows="3" />
+                                <ValidationMessage For="@(() => _page.Description)" />
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label for="content" class="form-label">Content</label>
+                                <InputTextArea id="content" @bind-Value="_page.Content" class="form-control" rows="10" />
+                                <ValidationMessage For="@(() => _page.Content)" />
+                                <small class="form-text text-muted">You can use HTML tags for formatting.</small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h5>Page Settings</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch">
+                                            <InputCheckbox id="isPublished" @bind-Value="_page.IsPublished" class="form-check-input" />
+                                            <label for="isPublished" class="form-check-label">Published</label>
+                                        </div>
+                                        <small class="form-text text-muted">Toggle to make the page visible to visitors.</small>
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <div class="form-check form-switch">
+                                            <InputCheckbox id="showInNavigation" @bind-Value="_page.ShowInNavigation" class="form-check-input" />
+                                            <label for="showInNavigation" class="form-check-label">Show in Navigation</label>
+                                        </div>
+                                        <small class="form-text text-muted">Toggle to include this page in the main navigation menu.</small>
+                                    </div>
+                                    
+                                    <div class="form-group mb-3">
+                                        <label for="order" class="form-label">Navigation Order</label>
+                                        <InputNumber id="order" @bind-Value="_page.Order" class="form-control" />
+                                        <ValidationMessage For="@(() => _page.Order)" />
+                                        <small class="form-text text-muted">Lower numbers appear first in the navigation.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Page Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    @if (!_isNewPage)
+                                    {
+                                        <p><strong>Created:</strong> @_page.CreatedAt.ToString("MMM d, yyyy h:mm tt")</p>
+                                        
+                                        @if (_page.UpdatedAt.HasValue)
+                                        {
+                                            <p><strong>Last Updated:</strong> @_page.UpdatedAt.Value.ToString("MMM d, yyyy h:mm tt")</p>
+                                        }
+                                        
+                                        @if (_page.PublishedAt.HasValue)
+                                        {
+                                            <p><strong>Published:</strong> @_page.PublishedAt.Value.ToString("MMM d, yyyy h:mm tt")</p>
+                                        }
+                                        
+                                        <hr />
+                                        
+                                        <div class="d-grid gap-2">
+                                            <a href="/page/@_page.Slug" target="_blank" class="btn btn-outline-primary">View Page</a>
+                                            <a href="/admin/page-builder/@_page.Id" class="btn btn-outline-secondary">Open in Page Builder</a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p>Save this page to access additional options.</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    
+    private Page _page = new Page();
+    private bool _isNewPage => Id == null;
+    private bool _loading = false;
+    private bool _isSaving = false;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPageAsync();
+    }
+    
+    private async Task LoadPageAsync()
+    {
+        if (_isNewPage)
+        {
+            // Initialize new page
+            _page = new Page
+            {
+                CreatedAt = DateTime.UtcNow,
+                IsPublished = false,
+                ShowInNavigation = true,
+                Order = 99,
+                Content = "<h1>New Page</h1><p>Enter your content here...</p>"
+            };
+        }
+        else
+        {
+            try
+            {
+                _loading = true;
+                _page = await PageService.GetPageAsync(Id.Value);
+                
+                if (_page == null)
+                {
+                    NavigationManager.NavigateTo("/admin/pages");
+                }
+            }
+            catch (Exception)
+            {
+                NavigationManager.NavigateTo("/admin/pages");
+            }
+            finally
+            {
+                _loading = false;
+            }
+        }
+    }
+    
+    private async Task SavePageAsync()
+    {
+        try
+        {
+            _isSaving = true;
+            
+            // Ensure slug is URL-friendly
+            _page.Slug = MakeUrlFriendly(_page.Slug);
+            
+            if (_isNewPage)
+            {
+                await PageService.CreatePageAsync(_page);
+            }
+            else
+            {
+                await PageService.UpdatePageAsync(_page.Id, _page);
+            }
+            
+            NavigationManager.NavigateTo("/admin/pages");
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Failed to save page: {ex.Message}");
+        }
+        finally
+        {
+            _isSaving = false;
+        }
+    }
+    
+    private void NavigateBack()
+    {
+        NavigationManager.NavigateTo("/admin/pages");
+    }
+    
+    private string MakeUrlFriendly(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return "";
+            
+        // Remove accents
+        text = new string(text
+            .Normalize(System.Text.NormalizationForm.FormD)
+            .Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)
+            .ToArray());
+            
+        // Convert to lowercase
+        text = text.ToLowerInvariant();
+        
+        // Replace spaces with hyphens
+        text = System.Text.RegularExpressions.Regex.Replace(text, @"\s+", "-");
+        
+        // Remove invalid characters
+        text = System.Text.RegularExpressions.Regex.Replace(text, @"[^a-z0-9\-]", "");
+        
+        // Remove duplicate hyphens
+        text = System.Text.RegularExpressions.Regex.Replace(text, @"-+", "-");
+        
+        // Trim hyphens from start and end
+        text = text.Trim('-');
+        
+        return text;
+    }
+}

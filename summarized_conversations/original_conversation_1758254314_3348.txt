@@ -1,0 +1,1 @@
+{'role': 'assistant', 'content': "Now let's create the database migrations to set up our SQLite database:\n\n<function_calls>\n<execute-command>\n# Create initial migration\ncd PersonalWebsite\n$HOME/.dotnet/dotnet ef migrations add InitialCreate --project PersonalWebsite.Server\n</execute-command>\n</function_calls>"}

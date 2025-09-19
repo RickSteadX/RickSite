@@ -1,0 +1,1 @@
+Reference `..\PersonalWebsite.Client\PersonalWebsite.Client.csproj` added to the project.
