@@ -75,7 +75,7 @@
                                 @foreach (var page in _pages.OrderByDescending(p => p.UpdatedAt ?? p.CreatedAt).Take(5))
                                 {
                                     <tr>
-                                        <td>@page.Title</td>
+                                        <td>@(page.Title)</td>
                                         <td>
                                             @if (page.IsPublished)
                                             {

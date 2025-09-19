@@ -41,8 +41,8 @@
                             @foreach (var page in _pages.OrderBy(p => p.Order))
                             {
                                 <tr>
-                                    <td>@page.Title</td>
-                                    <td>@page.Slug</td>
+                                    <td>@(page.Title)</td>
+                                    <td>@(page.Slug)</td>
                                     <td>
                                         @if (page.IsPublished)
                                         {
@@ -63,7 +63,7 @@
                                             <span class="badge bg-secondary">Hidden</span>
                                         }
                                     </td>
-                                    <td>@page.CreatedAt.ToString("MMM d, yyyy")</td>
+                                    <td>@(page.CreatedAt.ToString("MMM d, yyyy"))</td>
                                     <td>@(page.UpdatedAt?.ToString("MMM d, yyyy") ?? "-")</td>
                                     <td>
                                         <div class="btn-group">
