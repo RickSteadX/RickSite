@@ -1,0 +1,22 @@
+Saved working directory and index state WIP on fix-css-file-issue: da4d1b8 Fix CSS file naming issue after NavMenu rename
+Updating f3e8db7..847752f
+Fast-forward
+ .../{NavMenu.razor.css => SideNavMenu.razor.css}   |  0
+ outputs/workspace_output_1758256251_593.txt        |  1 +
+ outputs/workspace_output_1758256262_9915.txt       |  0
+ outputs/workspace_output_1758256269_9234.txt       | 62 ++++++++++++++++++++++
+ outputs/workspace_output_1758256276_7563.txt       |  1 +
+ outputs/workspace_output_1758256443_9754.txt       |  0
+ outputs/workspace_output_1758256454_9458.txt       |  7 +++
+ outputs/workspace_output_1758256462_411.txt        |  0
+ outputs/workspace_output_1758256473_1212.txt       |  0
+ 9 files changed, 71 insertions(+)
+ rename PersonalWebsite/PersonalWebsite.Client/Layout/{NavMenu.razor.css => SideNavMenu.razor.css} (100%)
+ create mode 100644 outputs/workspace_output_1758256251_593.txt
+ create mode 100644 outputs/workspace_output_1758256262_9915.txt
+ create mode 100644 outputs/workspace_output_1758256269_9234.txt
+ create mode 100644 outputs/workspace_output_1758256276_7563.txt
+ create mode 100644 outputs/workspace_output_1758256443_9754.txt
+ create mode 100644 outputs/workspace_output_1758256454_9458.txt
+ create mode 100644 outputs/workspace_output_1758256462_411.txt
+ create mode 100644 outputs/workspace_output_1758256473_1212.txt

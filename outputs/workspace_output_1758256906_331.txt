@@ -1,0 +1,10 @@
+     1	@page "/admin/pages/create"
+     2	@page "/admin/pages/edit/{Id:int}"
+     3	@attribute [Authorize]
+     4	@layout AdminLayout
+     5	@inject PageService PageService
+     6	@inject NavigationManager NavigationManager
+     7	@inject IJSRuntime JSRuntime
+     8	
+     9	<PageTitle>@(_isNewPage ? "Create Page" : "Edit Page") - Admin Dashboard</PageTitle>
+    10	

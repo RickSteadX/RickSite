@@ -1,0 +1,10 @@
+     1	@page "/admin/page-builder"
+     2	@page "/admin/page-builder/{PageId:int}"
+     3	@attribute [Authorize]
+     4	@layout AdminLayout
+     5	@inject PageService PageService
+     6	@inject PageComponentService ComponentService
+     7	@inject NavigationManager NavigationManager
+     8	@inject IJSRuntime JSRuntime
+     9	
+    10	<PageTitle>Page Builder - Admin Dashboard</PageTitle>

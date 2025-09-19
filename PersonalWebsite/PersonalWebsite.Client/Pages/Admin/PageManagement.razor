@@ -67,8 +67,8 @@
                                     <td>@(page.UpdatedAt?.ToString("MMM d, yyyy") ?? "-")</td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="/admin/pages/edit/@page.Id" class="btn btn-sm btn-primary">Edit</a>
-                                            <a href="/page/@page.Slug" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+                                            <a href="@($"/admin/pages/edit/{page.Id}")" class="btn btn-sm btn-primary">Edit</a>
+                                            <a href="@($"/page/{page.Slug}")" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
                                             <button class="btn btn-sm btn-danger" @onclick="() => DeletePageAsync(page)">Delete</button>
                                         </div>
                                     </td>

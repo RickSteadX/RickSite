@@ -1,0 +1,149 @@
+     1	@page "/admin"
+     2	@attribute [Authorize]
+     3	@layout AdminLayout
+     4	@inject PageService PageService
+     5	@inject NavigationManager NavigationManager
+     6	
+     7	<PageTitle>Admin Dashboard - Alex Morgan</PageTitle>
+     8	
+     9	<div class="container">
+    10	    <h1>Admin Dashboard</h1>
+    11	    
+    12	    <div class="row mt-4">
+    13	        <div class="col-md-4">
+    14	            <div class="card">
+    15	                <div class="card-body">
+    16	                    <h3>Pages</h3>
+    17	                    <p class="display-4">@(_pages?.Count ?? 0)</p>
+    18	                    <p>Total pages in the system</p>
+    19	                    <a href="/admin/pages" class="btn btn-primary">Manage Pages</a>
+    20	                </div>
+    21	            </div>
+    22	        </div>
+    23	        
+    24	        <div class="col-md-4">
+    25	            <div class="card">
+    26	                <div class="card-body">
+    27	                    <h3>Published Pages</h3>
+    28	                    <p class="display-4">@(_pages?.Count(p => p.IsPublished) ?? 0)</p>
+    29	                    <p>Pages visible to visitors</p>
+    30	                    <a href="/admin/pages" class="btn btn-primary">View Published</a>
+    31	                </div>
+    32	            </div>
+    33	        </div>
+    34	        
+    35	        <div class="col-md-4">
+    36	            <div class="card">
+    37	                <div class="card-body">
+    38	                    <h3>Quick Actions</h3>
+    39	                    <div class="d-grid gap-2">
+    40	                        <a href="/admin/pages/create" class="btn btn-primary">Create New Page</a>
+    41	                        <a href="/admin/page-builder" class="btn btn-secondary">Open Page Builder</a>
+    42	                        <a href="/" target="_blank" class="btn btn-outline-primary">View Website</a>
+    43	                    </div>
+    44	                </div>
+    45	            </div>
+    46	        </div>
+    47	    </div>
+    48	    
+    49	    <div class="row mt-4">
+    50	        <div class="col-md-8">
+    51	            <div class="card">
+    52	                <div class="card-header">
+    53	                    <h3>Recent Pages</h3>
+    54	                </div>
+    55	                <div class="card-body">
+    56	                    @if (_loading)
+    57	                    {
+    58	                        <div class="loading-container">
+    59	                            <div class="spinner"></div>
+    60	                            <p>Loading pages...</p>
+    61	                        </div>
+    62	                    }
+    63	                    else if (_pages != null && _pages.Any())
+    64	                    {
+    65	                        <table class="table">
+    66	                            <thead>
+    67	                                <tr>
+    68	                                    <th>Title</th>
+    69	                                    <th>Status</th>
+    70	                                    <th>Last Updated</th>
+    71	                                    <th>Actions</th>
+    72	                                </tr>
+    73	                            </thead>
+    74	                            <tbody>
+    75	                                @foreach (var page in _pages.OrderByDescending(p => p.UpdatedAt ?? p.CreatedAt).Take(5))
+    76	                                {
+    77	                                    <tr>
+    78	                                        <td>@page.Title</td>
+    79	                                        <td>
+    80	                                            @if (page.IsPublished)
+    81	                                            {
+    82	                                                <span class="badge bg-success">Published</span>
+    83	                                            }
+    84	                                            else
+    85	                                            {
+    86	                                                <span class="badge bg-secondary">Draft</span>
+    87	                                            }
+    88	                                        </td>
+    89	                                        <td>@((page.UpdatedAt ?? page.CreatedAt).ToString("MMM d, yyyy"))</td>
+    90	                                        <td>
+    91	                                            <a href="/admin/pages/edit/@page.Id" class="btn btn-sm btn-primary">Edit</a>
+    92	                                            <a href="/page/@page.Slug" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+    93	                                        </td>
+    94	                                    </tr>
+    95	                                }
+    96	                            </tbody>
+    97	                        </table>
+    98	                        <a href="/admin/pages" class="btn btn-outline-primary">View All Pages</a>
+    99	                    }
+   100	                    else
+   101	                    {
+   102	                        <p>No pages found. <a href="/admin/pages/create">Create your first page</a>.</p>
+   103	                    }
+   104	                </div>
+   105	            </div>
+   106	        </div>
+   107	        
+   108	        <div class="col-md-4">
+   109	            <div class="card">
+   110	                <div class="card-header">
+   111	                    <h3>System Information</h3>
+   112	                </div>
+   113	                <div class="card-body">
+   114	                    <p><strong>Current Time:</strong> @DateTime.Now.ToString("f")</p>
+   115	                    <p><strong>Server Status:</strong> <span class="badge bg-success">Online</span></p>
+   116	                    <p><strong>Database:</strong> <span class="badge bg-success">Connected</span></p>
+   117	                    <p><strong>Last Login:</strong> @DateTime.Now.AddHours(-2).ToString("f")</p>
+   118	                </div>
+   119	            </div>
+   120	        </div>
+   121	    </div>
+   122	</div>
+   123	
+   124	@code {
+   125	    private List<Page> _pages;
+   126	    private bool _loading = true;
+   127	    
+   128	    protected override async Task OnInitializedAsync()
+   129	    {
+   130	        await LoadPagesAsync();
+   131	    }
+   132	    
+   133	    private async Task LoadPagesAsync()
+   134	    {
+   135	        try
+   136	        {
+   137	            _loading = true;
+   138	            _pages = await PageService.GetAllPagesAsync();
+   139	        }
+   140	        catch (Exception)
+   141	        {
+   142	            _pages = new List<Page>();
+   143	        }
+   144	        finally
+   145	        {
+   146	            _loading = false;
+   147	        }
+   148	    }
+   149	}
