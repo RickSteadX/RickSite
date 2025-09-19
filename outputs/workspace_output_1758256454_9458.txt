@@ -1,0 +1,7 @@
+total 20
+drwxr-xr-x  2 root root  128 Sep 19 04:31 .
+drwxr-xr-x 12 root root 4096 Sep 19 04:31 ..
+-rw-r--r--  1 root root  372 Sep 19 03:36 MainLayout.razor
+-rw-r--r--  1 root root 1478 Sep 19 03:36 MainLayout.razor.css
+-rw-r--r--  1 root root 2682 Sep 19 03:36 NavMenu.razor.css
+-rw-r--r--  1 root root 1391 Sep 19 04:31 SideNavMenu.razor

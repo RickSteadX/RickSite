@@ -1,0 +1,62 @@
+Saved working directory and index state WIP on fix-blazor-issues: ac7757c Fix Blazor WebAssembly project issues
+Updating 6e59a04..f3e8db7
+Fast-forward
+ .../Layout/{NavMenu.razor => SideNavMenu.razor}    |   0
+ .../PersonalWebsite.Client.csproj                  |  41 ++--
+ .../Shared/AdminLayout.razor                       |   2 +-
+ .../PersonalWebsite.Client/Shared/MainLayout.razor |   2 +-
+ .../PersonalWebsite.Client/_Imports.razor          |  26 ++-
+ outputs/workspace_output_1758254843_2848.txt       |   0
+ outputs/workspace_output_1758254847_8298.txt       | 257 +++++++++++++++++++++
+ outputs/workspace_output_1758254853_1867.txt       |   0
+ outputs/workspace_output_1758254858_7281.txt       |   0
+ outputs/workspace_output_1758254923_2662.txt       |   0
+ outputs/workspace_output_1758254928_6187.txt       |   0
+ outputs/workspace_output_1758254957_8635.txt       |   3 +
+ outputs/workspace_output_1758254963_5364.txt       |   1 +
+ outputs/workspace_output_1758255531_6674.txt       |   0
+ outputs/workspace_output_1758255554_6794.txt       |   2 +
+ outputs/workspace_output_1758255562_8455.txt       |   1 +
+ outputs/workspace_output_1758255569_6773.txt       |   4 +
+ outputs/workspace_output_1758255576_7332.txt       |   2 +
+ outputs/workspace_output_1758255592_4180.txt       |   2 +
+ outputs/workspace_output_1758256029_1604.txt       |   0
+ outputs/workspace_output_1758256035_4905.txt       |  19 ++
+ outputs/workspace_output_1758256045_1752.txt       |  10 +
+ outputs/workspace_output_1758256074_2500.txt       |  45 ++++
+ outputs/workspace_output_1758256081_2889.txt       | 149 ++++++++++++
+ outputs/workspace_output_1758256088_7877.txt       | 134 +++++++++++
+ outputs/workspace_output_1758256094_559.txt        |  71 ++++++
+ outputs/workspace_output_1758256104_1971.txt       |  39 ++++
+ outputs/workspace_output_1758256113_9341.txt       | 123 ++++++++++
+ outputs/workspace_output_1758256125_6409.txt       |   0
+ outputs/workspace_output_1758256214_7452.txt       |  96 ++++++++
+ outputs/workspace_output_1758256237_8693.txt       |   0
+ 31 files changed, 998 insertions(+), 31 deletions(-)
+ rename PersonalWebsite/PersonalWebsite.Client/Layout/{NavMenu.razor => SideNavMenu.razor} (100%)
+ create mode 100644 outputs/workspace_output_1758254843_2848.txt
+ create mode 100644 outputs/workspace_output_1758254847_8298.txt
+ create mode 100644 outputs/workspace_output_1758254853_1867.txt
+ create mode 100644 outputs/workspace_output_1758254858_7281.txt
+ create mode 100644 outputs/workspace_output_1758254923_2662.txt
+ create mode 100644 outputs/workspace_output_1758254928_6187.txt
+ create mode 100644 outputs/workspace_output_1758254957_8635.txt
+ create mode 100644 outputs/workspace_output_1758254963_5364.txt
+ create mode 100644 outputs/workspace_output_1758255531_6674.txt
+ create mode 100644 outputs/workspace_output_1758255554_6794.txt
+ create mode 100644 outputs/workspace_output_1758255562_8455.txt
+ create mode 100644 outputs/workspace_output_1758255569_6773.txt
+ create mode 100644 outputs/workspace_output_1758255576_7332.txt
+ create mode 100644 outputs/workspace_output_1758255592_4180.txt
+ create mode 100644 outputs/workspace_output_1758256029_1604.txt
+ create mode 100644 outputs/workspace_output_1758256035_4905.txt
+ create mode 100644 outputs/workspace_output_1758256045_1752.txt
+ create mode 100644 outputs/workspace_output_1758256074_2500.txt
+ create mode 100644 outputs/workspace_output_1758256081_2889.txt
+ create mode 100644 outputs/workspace_output_1758256088_7877.txt
+ create mode 100644 outputs/workspace_output_1758256094_559.txt
+ create mode 100644 outputs/workspace_output_1758256104_1971.txt
+ create mode 100644 outputs/workspace_output_1758256113_9341.txt
+ create mode 100644 outputs/workspace_output_1758256125_6409.txt
+ create mode 100644 outputs/workspace_output_1758256214_7452.txt
+ create mode 100644 outputs/workspace_output_1758256237_8693.txt
