@@ -9,7 +9,7 @@ services:
     restart: unless-stopped
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Data Source=/app/data/personalwebsite.db
+      - "ConnectionStrings__DefaultConnection=Data Source=/app/data/personalwebsite.db"
     volumes:
       - app-data:/app/data
     networks:
@@ -20,21 +20,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 5s
-
-  caddy:
-    image: caddy:2-alpine
-    container_name: personalwebsite-caddy
-    restart: unless-stopped
     ports:
       - "6060:6060"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro,z
-      - caddy-data:/data
-      - caddy-config:/config
-    networks:
-      - app-network
-    depends_on:
-      - webapp
 
 networks:
   app-network:

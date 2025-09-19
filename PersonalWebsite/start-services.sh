@@ -19,7 +19,7 @@ podman run -d \
   -p 6060:6060 \
   -v app-data:/app/data \
   -e ASPNETCORE_ENVIRONMENT=Production \
-  -e ConnectionStrings__DefaultConnection=Data Source=/app/data/personalwebsite.db \
+  -e "ConnectionStrings__DefaultConnection=Data Source=/app/data/personalwebsite.db" \
   personalwebsite-app
 
 # Wait for the webapp to start
