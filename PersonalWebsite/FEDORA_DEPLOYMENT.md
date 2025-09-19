@@ -8,6 +8,15 @@ This guide provides instructions for deploying the Personal Website application 
 - Podman installed
 - Git installed
 
+## Understanding the Application Architecture
+
+This application is built using Blazor WebAssembly, which consists of:
+
+1. **Server-side**: ASP.NET Core backend that serves the API and hosts the client application
+2. **Client-side**: Blazor WebAssembly frontend that runs in the browser
+
+The application is packaged as a single container that includes both the server and client components. The server serves the client application to the browser.
+
 ## Deployment Options
 
 We've provided several scripts to help you deploy the application based on your specific environment and requirements.
@@ -82,6 +91,24 @@ If you encounter storage issues with Podman, try pruning the system:
 podman system prune -f
 ```
 
+### Client-Side Not Loading
+
+If the client-side application is not loading:
+
+1. Check if the server is running:
+   ```bash
+   podman logs personalwebsite-app
+   ```
+
+2. Verify the health endpoint is accessible:
+   ```bash
+   podman exec personalwebsite-app wget --no-verbose --tries=1 --spider http://localhost:6060/health
+   ```
+
+3. Make sure you're accessing the correct URL (http://localhost:6060 or http://localhost:8080 depending on your deployment option)
+
+4. Clear your browser cache and try again
+
 ## Accessing the Application
 
 After successful deployment, you can access the application at:
@@ -99,3 +126,17 @@ To access the admin area, use the following credentials:
 ## Data Persistence
 
 The application data is stored in a volume named `app-data`. This ensures that your data persists even if the container is removed.
+
+## Monitoring and Logs
+
+To view the logs of the application:
+
+```bash
+podman logs personalwebsite-app
+```
+
+To view the logs of the Caddy server (if using):
+
+```bash
+podman logs personalwebsite-caddy
+```

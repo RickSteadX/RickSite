@@ -23,16 +23,16 @@ podman run -d \
   -e ConnectionStrings__DefaultConnection=Data Source=/app/data/personalwebsite.db \
   personalwebsite-app
 
-# Start the caddy container
-echo "Starting caddy container..."
-podman run -d \
-  --name personalwebsite-caddy \
-  --network app-network \
-  -p 6060:6060 \
-  -v "$(pwd)/Caddyfile:/etc/caddy/Caddyfile:ro" \
-  -v caddy-data:/data \
-  -v caddy-config:/config \
-  caddy:2-alpine
+# Wait for the webapp to start
+echo "Waiting for webapp to start..."
+sleep 5
 
-echo "Services started!"
+# Check if the webapp is running
+echo "Checking if webapp is running..."
+podman exec personalwebsite-app wget --no-verbose --tries=1 --spider http://localhost:6060/health || {
+  echo "Webapp failed to start. Check logs with: podman logs personalwebsite-app"
+  exit 1
+}
+
+echo "Webapp started successfully!"
 echo "Access your application at: http://localhost:6060"

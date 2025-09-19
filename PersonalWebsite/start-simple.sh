@@ -17,6 +17,17 @@ podman run -d \
   -e ConnectionStrings__DefaultConnection=Data Source=/app/data/personalwebsite.db \
   personalwebsite-app
 
-echo "Webapp started!"
+# Wait for the webapp to start
+echo "Waiting for webapp to start..."
+sleep 5
+
+# Check if the webapp is running
+echo "Checking if webapp is running..."
+podman exec personalwebsite-app wget --no-verbose --tries=1 --spider http://localhost:6060/health || {
+  echo "Webapp failed to start. Check logs with: podman logs personalwebsite-app"
+  exit 1
+}
+
+echo "Webapp started successfully!"
 echo "Access your application at: http://localhost:6060"
 echo "Note: This bypasses Caddy reverse proxy and serves directly from ASP.NET Core"
