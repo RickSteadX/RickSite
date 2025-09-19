@@ -1,0 +1,10 @@
+     1	@page "/admin/settings"
+     2	@attribute [Authorize]
+     3	@layout AdminLayout
+     4	@inject IJSRuntime JSRuntime
+     5	
+     6	<PageTitle>Settings - Admin Dashboard</PageTitle>
+     7	
+     8	<div class="container">
+     9	    <h1>Settings</h1>
+    10	    

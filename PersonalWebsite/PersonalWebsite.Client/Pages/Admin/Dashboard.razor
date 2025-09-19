@@ -88,8 +88,8 @@
                                         </td>
                                         <td>@((page.UpdatedAt ?? page.CreatedAt).ToString("MMM d, yyyy"))</td>
                                         <td>
-                                            <a href="/admin/pages/edit/@page.Id" class="btn btn-sm btn-primary">Edit</a>
-                                            <a href="/page/@page.Slug" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+                                            <a href="@($"/admin/pages/edit/{page.Id}")" class="btn btn-sm btn-primary">Edit</a>
+                                            <a href="@($"/page/{page.Slug}")" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
                                         </td>
                                     </tr>
                                 }

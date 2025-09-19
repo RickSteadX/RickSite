@@ -1,0 +1,134 @@
+     1	@page "/admin/pages"
+     2	@attribute [Authorize]
+     3	@layout AdminLayout
+     4	@inject PageService PageService
+     5	@inject NavigationManager NavigationManager
+     6	@inject IJSRuntime JSRuntime
+     7	
+     8	<PageTitle>Manage Pages - Admin Dashboard</PageTitle>
+     9	
+    10	<div class="container">
+    11	    <div class="d-flex justify-content-between align-items-center mb-4">
+    12	        <h1>Manage Pages</h1>
+    13	        <a href="/admin/pages/create" class="btn btn-primary">Create New Page</a>
+    14	    </div>
+    15	    
+    16	    @if (_loading)
+    17	    {
+    18	        <div class="loading-container">
+    19	            <div class="spinner"></div>
+    20	            <p>Loading pages...</p>
+    21	        </div>
+    22	    }
+    23	    else if (_pages != null && _pages.Any())
+    24	    {
+    25	        <div class="card">
+    26	            <div class="card-body">
+    27	                <div class="table-responsive">
+    28	                    <table class="table table-hover">
+    29	                        <thead>
+    30	                            <tr>
+    31	                                <th>Title</th>
+    32	                                <th>Slug</th>
+    33	                                <th>Status</th>
+    34	                                <th>Navigation</th>
+    35	                                <th>Created</th>
+    36	                                <th>Updated</th>
+    37	                                <th>Actions</th>
+    38	                            </tr>
+    39	                        </thead>
+    40	                        <tbody>
+    41	                            @foreach (var page in _pages.OrderBy(p => p.Order))
+    42	                            {
+    43	                                <tr>
+    44	                                    <td>@page.Title</td>
+    45	                                    <td>@page.Slug</td>
+    46	                                    <td>
+    47	                                        @if (page.IsPublished)
+    48	                                        {
+    49	                                            <span class="badge bg-success">Published</span>
+    50	                                        }
+    51	                                        else
+    52	                                        {
+    53	                                            <span class="badge bg-secondary">Draft</span>
+    54	                                        }
+    55	                                    </td>
+    56	                                    <td>
+    57	                                        @if (page.ShowInNavigation)
+    58	                                        {
+    59	                                            <span class="badge bg-info">Visible</span>
+    60	                                        }
+    61	                                        else
+    62	                                        {
+    63	                                            <span class="badge bg-secondary">Hidden</span>
+    64	                                        }
+    65	                                    </td>
+    66	                                    <td>@page.CreatedAt.ToString("MMM d, yyyy")</td>
+    67	                                    <td>@(page.UpdatedAt?.ToString("MMM d, yyyy") ?? "-")</td>
+    68	                                    <td>
+    69	                                        <div class="btn-group">
+    70	                                            <a href="/admin/pages/edit/@page.Id" class="btn btn-sm btn-primary">Edit</a>
+    71	                                            <a href="/page/@page.Slug" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+    72	                                            <button class="btn btn-sm btn-danger" @onclick="() => DeletePageAsync(page)">Delete</button>
+    73	                                        </div>
+    74	                                    </td>
+    75	                                </tr>
+    76	                            }
+    77	                        </tbody>
+    78	                    </table>
+    79	                </div>
+    80	            </div>
+    81	        </div>
+    82	    }
+    83	    else
+    84	    {
+    85	        <div class="alert alert-info">
+    86	            <p>No pages found. <a href="/admin/pages/create">Create your first page</a>.</p>
+    87	        </div>
+    88	    }
+    89	</div>
+    90	
+    91	@code {
+    92	    private List<Page> _pages;
+    93	    private bool _loading = true;
+    94	    
+    95	    protected override async Task OnInitializedAsync()
+    96	    {
+    97	        await LoadPagesAsync();
+    98	    }
+    99	    
+   100	    private async Task LoadPagesAsync()
+   101	    {
+   102	        try
+   103	        {
+   104	            _loading = true;
+   105	            _pages = await PageService.GetAllPagesAsync();
+   106	        }
+   107	        catch (Exception)
+   108	        {
+   109	            _pages = new List<Page>();
+   110	        }
+   111	        finally
+   112	        {
+   113	            _loading = false;
+   114	        }
+   115	    }
+   116	    
+   117	    private async Task DeletePageAsync(Page page)
+   118	    {
+   119	        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete the page '{page.Title}'? This action cannot be undone.");
+   120	        
+   121	        if (confirmed)
+   122	        {
+   123	            try
+   124	            {
+   125	                await PageService.DeletePageAsync(page.Id);
+   126	                _pages.Remove(page);
+   127	            }
+   128	            catch (Exception)
+   129	            {
+   130	                await JSRuntime.InvokeVoidAsync("alert", "Failed to delete the page. Please try again.");
+   131	            }
+   132	        }
+   133	    }
+   134	}
