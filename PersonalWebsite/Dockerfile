@@ -6,14 +6,17 @@ WORKDIR /src
 COPY ["PersonalWebsite.Client/PersonalWebsite.Client.csproj", "PersonalWebsite.Client/"]
 COPY ["PersonalWebsite.Server/PersonalWebsite.Server.csproj", "PersonalWebsite.Server/"]
 COPY ["PersonalWebsite.sln", "."]
-RUN dotnet restore
+
+# Force NuGet to use specific package sources and clear cache to ensure fresh packages
+RUN dotnet nuget locals all --clear
+RUN dotnet restore --disable-parallel
 
 # Copy the rest of the source code
 COPY . .
 
 # Build and publish the application
-RUN dotnet build -c Release --no-restore
-RUN dotnet publish -c Release -o /app/publish --no-restore
+RUN dotnet build -c Release
+RUN dotnet publish -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS runtime
