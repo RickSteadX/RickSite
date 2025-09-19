@@ -1,8 +1,7 @@
 # Caddyfile for Personal Website
 
-# Replace example.com with your actual domain in production
-# For local development, you can use localhost
-:80 {
+# Using port 6060 for the application
+:6060 {
     # Reverse proxy to the ASP.NET Core application
     reverse_proxy webapp:80 {
         # Health checks

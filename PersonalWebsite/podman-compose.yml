@@ -28,7 +28,7 @@ services:
     ports:
       - "6060:6060"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro,z
       - caddy-data:/data
       - caddy-config:/config
     networks:
