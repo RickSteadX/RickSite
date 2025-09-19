@@ -1,0 +1,61 @@
+     1	using System;
+     2	using System.Collections.Generic;
+     3	using System.Net.Http;
+     4	using System.Net.Http.Json;
+     5	using System.Threading.Tasks;
+     6	using PersonalWebsite.Client.Models;
+     7	
+     8	namespace PersonalWebsite.Client.Services
+     9	{
+    10	    public class PageComponentService
+    11	    {
+    12	        private readonly HttpClient _httpClient;
+    13	        private const string ComponentsUrl = "api/pagecomponents";
+    14	
+    15	        public PageComponentService(HttpClient httpClient)
+    16	        {
+    17	            _httpClient = httpClient;
+    18	        }
+    19	
+    20	        public async Task<List<PageComponent>> GetPageComponentsAsync(int pageId)
+    21	        {
+    22	            return await _httpClient.GetFromJsonAsync<List<PageComponent>>($"{ComponentsUrl}/page/{pageId}");
+    23	        }
+    24	
+    25	        public async Task<PageComponent> GetPageComponentAsync(int id)
+    26	        {
+    27	            return await _httpClient.GetFromJsonAsync<PageComponent>($"{ComponentsUrl}/{id}");
+    28	        }
+    29	
+    30	        public async Task<PageComponent> CreatePageComponentAsync(PageComponent component)
+    31	        {
+    32	            var response = await _httpClient.PostAsJsonAsync(ComponentsUrl, component);
+    33	            response.EnsureSuccessStatusCode();
+    34	            return await response.Content.ReadFromJsonAsync<PageComponent>();
+    35	        }
+    36	
+    37	        public async Task UpdatePageComponentAsync(int id, PageComponent component)
+    38	        {
+    39	            var response = await _httpClient.PutAsJsonAsync($"{ComponentsUrl}/{id}", component);
+    40	            response.EnsureSuccessStatusCode();
+    41	        }
+    42	
+    43	        public async Task DeletePageComponentAsync(int id)
+    44	        {
+    45	            var response = await _httpClient.DeleteAsync($"{ComponentsUrl}/{id}");
+    46	            response.EnsureSuccessStatusCode();
+    47	        }
+    48	
+    49	        public async Task ReorderPageComponentsAsync(List<ReorderItem> reorderItems)
+    50	        {
+    51	            var response = await _httpClient.PostAsJsonAsync($"{ComponentsUrl}/reorder", reorderItems);
+    52	            response.EnsureSuccessStatusCode();
+    53	        }
+    54	
+    55	        public class ReorderItem
+    56	        {
+    57	            public int Id { get; set; }
+    58	            public int Order { get; set; }
+    59	        }
+    60	    }
+    61	}

@@ -1,0 +1,6 @@
+    25	                    <NavLink class="admin-nav-link" href="/admin" Match="NavLinkMatch.Exact">
+    26	                        Dashboard
+    27	                    </NavLink>
+    28	                </li>
+    29	                <li class="admin-nav-item">
+    30	                    <NavLink class="admin-nav-link" href="/admin/pages">

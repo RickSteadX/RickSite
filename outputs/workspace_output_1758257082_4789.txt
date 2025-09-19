@@ -1,0 +1,31 @@
+Saved working directory and index state WIP on fix-razor-syntax-issues: 1d96b78 Fix Razor syntax issues in admin pages
+Updating c2c38b1..f5fdb31
+Fast-forward
+ .../Pages/Admin/Dashboard.razor                    |   4 +-
+ .../Pages/Admin/PageManagement.razor               |   4 +-
+ .../PersonalWebsite.Client/_Imports.razor          |   1 +
+ outputs/workspace_output_1758256486_6961.txt       |   1 +
+ outputs/workspace_output_1758256496_9058.txt       |   0
+ outputs/workspace_output_1758256509_1240.txt       |  22 +++
+ outputs/workspace_output_1758256522_8036.txt       |   1 +
+ outputs/workspace_output_1758256551_9283.txt       |   3 +
+ outputs/workspace_output_1758256875_1417.txt       |   0
+ outputs/workspace_output_1758256885_6156.txt       | 149 +++++++++++++++++++++
+ outputs/workspace_output_1758256890_8435.txt       | 134 ++++++++++++++++++
+ outputs/workspace_output_1758256897_1973.txt       |  10 ++
+ outputs/workspace_output_1758256906_331.txt        |  10 ++
+ outputs/workspace_output_1758256913_9088.txt       |  10 ++
+ outputs/workspace_output_1758256982_2905.txt       |   0
+ 15 files changed, 345 insertions(+), 4 deletions(-)
+ create mode 100644 outputs/workspace_output_1758256486_6961.txt
+ create mode 100644 outputs/workspace_output_1758256496_9058.txt
+ create mode 100644 outputs/workspace_output_1758256509_1240.txt
+ create mode 100644 outputs/workspace_output_1758256522_8036.txt
+ create mode 100644 outputs/workspace_output_1758256551_9283.txt
+ create mode 100644 outputs/workspace_output_1758256875_1417.txt
+ create mode 100644 outputs/workspace_output_1758256885_6156.txt
+ create mode 100644 outputs/workspace_output_1758256890_8435.txt
+ create mode 100644 outputs/workspace_output_1758256897_1973.txt
+ create mode 100644 outputs/workspace_output_1758256906_331.txt
+ create mode 100644 outputs/workspace_output_1758256913_9088.txt
+ create mode 100644 outputs/workspace_output_1758256982_2905.txt

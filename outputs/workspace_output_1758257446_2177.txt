@@ -1,0 +1,15 @@
+     1	using System;
+     2	
+     3	namespace PersonalWebsite.Client.Models
+     4	{
+     5	    public class User
+     6	    {
+     7	        public int Id { get; set; }
+     8	        public string Username { get; set; }
+     9	        public string Email { get; set; }
+    10	        public string FirstName { get; set; }
+    11	        public string LastName { get; set; }
+    12	        public DateTime CreatedAt { get; set; }
+    13	        public DateTime? LastLogin { get; set; }
+    14	    }
+    15	}

@@ -1,0 +1,64 @@
+     1	using System;
+     2	using System.Collections.Generic;
+     3	using System.Net.Http;
+     4	using System.Net.Http.Json;
+     5	using System.Threading.Tasks;
+     6	using PersonalWebsite.Client.Models;
+     7	
+     8	namespace PersonalWebsite.Client.Services
+     9	{
+    10	    public class PageService
+    11	    {
+    12	        private readonly HttpClient _httpClient;
+    13	        private const string PagesUrl = "api/pages";
+    14	
+    15	        public PageService(HttpClient httpClient)
+    16	        {
+    17	            _httpClient = httpClient;
+    18	        }
+    19	
+    20	        public async Task<List<Page>> GetPagesAsync()
+    21	        {
+    22	            return await _httpClient.GetFromJsonAsync<List<Page>>(PagesUrl);
+    23	        }
+    24	
+    25	        public async Task<List<Page>> GetAllPagesAsync()
+    26	        {
+    27	            return await _httpClient.GetFromJsonAsync<List<Page>>($"{PagesUrl}/all");
+    28	        }
+    29	
+    30	        public async Task<Page> GetPageAsync(int id)
+    31	        {
+    32	            return await _httpClient.GetFromJsonAsync<Page>($"{PagesUrl}/{id}");
+    33	        }
+    34	
+    35	        public async Task<Page> GetPageBySlugAsync(string slug)
+    36	        {
+    37	            return await _httpClient.GetFromJsonAsync<Page>($"{PagesUrl}/slug/{slug}");
+    38	        }
+    39	
+    40	        public async Task<List<object>> GetNavigationAsync()
+    41	        {
+    42	            return await _httpClient.GetFromJsonAsync<List<object>>($"{PagesUrl}/navigation");
+    43	        }
+    44	
+    45	        public async Task<Page> CreatePageAsync(Page page)
+    46	        {
+    47	            var response = await _httpClient.PostAsJsonAsync(PagesUrl, page);
+    48	            response.EnsureSuccessStatusCode();
+    49	            return await response.Content.ReadFromJsonAsync<Page>();
+    50	        }
+    51	
+    52	        public async Task UpdatePageAsync(int id, Page page)
+    53	        {
+    54	            var response = await _httpClient.PutAsJsonAsync($"{PagesUrl}/{id}", page);
+    55	            response.EnsureSuccessStatusCode();
+    56	        }
+    57	
+    58	        public async Task DeletePageAsync(int id)
+    59	        {
+    60	            var response = await _httpClient.DeleteAsync($"{PagesUrl}/{id}");
+    61	            response.EnsureSuccessStatusCode();
+    62	        }
+    63	    }
+    64	}

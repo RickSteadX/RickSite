@@ -1,0 +1,132 @@
+    60	    
+    61	    protected override async Task OnInitializedAsync()
+    62	    {
+    63	        await LoadPageAsync();
+    64	    }
+    65	    
+    66	    protected override async Task OnParametersSetAsync()
+    67	    {
+    68	        await LoadPageAsync();
+    69	    }
+    70	    
+    71	    private async Task LoadPageAsync()
+    72	    {
+    73	        try
+    74	        {
+    75	            _loading = true;
+    76	            _page = await PageService.GetPageBySlugAsync(Slug);
+    77	            
+    78	            if (_page != null)
+    79	            {
+    80	                _components = await PageService.GetPageComponentsAsync(_page.Id);
+    81	            }
+    82	        }
+    83	        catch (Exception ex)
+    84	        {
+    85	            _errorMessage = ex.Message;
+    86	            _page = null;
+    87	        }
+    88	        finally
+    89	        {
+    90	            _loading = false;
+    91	        }
+    92	    }
+    93	    
+    94	    private RenderFragment RenderComponent(PageComponent component) => builder =>
+    95	    {
+    96	        switch (component.ComponentType.ToLower())
+    97	        {
+    98	            case "text":
+    99	                builder.AddMarkupContent(0, component.Content);
+   100	                break;
+   101	                
+   102	            case "image":
+   103	                var props = component.GetProperties<ImageComponentProps>();
+   104	                builder.OpenElement(0, "img");
+   105	                builder.AddAttribute(1, "src", props.Src);
+   106	                builder.AddAttribute(2, "alt", props.Alt);
+   107	                builder.AddAttribute(3, "class", "img-fluid");
+   108	                if (!string.IsNullOrEmpty(props.Width))
+   109	                {
+   110	                    builder.AddAttribute(4, "width", props.Width);
+   111	                }
+   112	                if (!string.IsNullOrEmpty(props.Height))
+   113	                {
+   114	                    builder.AddAttribute(5, "height", props.Height);
+   115	                }
+   116	                builder.CloseElement();
+   117	                break;
+   118	                
+   119	            case "video":
+   120	                var videoProps = component.GetProperties<VideoComponentProps>();
+   121	                builder.OpenElement(0, "div");
+   122	                builder.AddAttribute(1, "class", "video-container");
+   123	                builder.OpenElement(2, "iframe");
+   124	                builder.AddAttribute(3, "src", videoProps.Src);
+   125	                builder.AddAttribute(4, "width", "100%");
+   126	                builder.AddAttribute(5, "height", "400");
+   127	                builder.AddAttribute(6, "frameborder", "0");
+   128	                builder.AddAttribute(7, "allowfullscreen", true);
+   129	                builder.CloseElement();
+   130	                builder.CloseElement();
+   131	                break;
+   132	                
+   133	            case "gallery":
+   134	                var galleryProps = component.GetProperties<GalleryComponentProps>();
+   135	                builder.OpenElement(0, "div");
+   136	                builder.AddAttribute(1, "class", "gallery");
+   137	                
+   138	                foreach (var image in galleryProps.Images)
+   139	                {
+   140	                    builder.OpenElement(2, "div");
+   141	                    builder.AddAttribute(3, "class", "gallery-item");
+   142	                    builder.OpenElement(4, "img");
+   143	                    builder.AddAttribute(5, "src", image.Src);
+   144	                    builder.AddAttribute(6, "alt", image.Alt);
+   145	                    builder.AddAttribute(7, "class", "img-fluid");
+   146	                    builder.CloseElement();
+   147	                    builder.CloseElement();
+   148	                }
+   149	                
+   150	                builder.CloseElement();
+   151	                break;
+   152	                
+   153	            default:
+   154	                builder.AddMarkupContent(0, component.Content);
+   155	                break;
+   156	        }
+   157	    };
+   158	    
+   159	    protected override async Task OnAfterRenderAsync(bool firstRender)
+   160	    {
+   161	        if (firstRender)
+   162	        {
+   163	            await JSRuntime.InvokeVoidAsync("initializeApp");
+   164	        }
+   165	    }
+   166	    
+   167	    private class ImageComponentProps
+   168	    {
+   169	        public string Src { get; set; }
+   170	        public string Alt { get; set; }
+   171	        public string Width { get; set; }
+   172	        public string Height { get; set; }
+   173	    }
+   174	    
+   175	    private class VideoComponentProps
+   176	    {
+   177	        public string Src { get; set; }
+   178	        public string Title { get; set; }
+   179	    }
+   180	    
+   181	    private class GalleryComponentProps
+   182	    {
+   183	        public List<GalleryImage> Images { get; set; } = new List<GalleryImage>();
+   184	    }
+   185	    
+   186	    private class GalleryImage
+   187	    {
+   188	        public string Src { get; set; }
+   189	        public string Alt { get; set; }
+   190	    }
+   191	}
