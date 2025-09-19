@@ -5,7 +5,7 @@
 <div class="@(_isDarkTheme ? "dark-theme" : "")">
     <header class="navbar">
         <a href="/" class="navbar-brand">Alex Morgan</a>
-        <PersonalWebsite.Client.Shared.NavMenu />
+        <NavMenu />
         <button class="theme-toggle" @onclick="ToggleTheme">
             @if (_isDarkTheme)
             {

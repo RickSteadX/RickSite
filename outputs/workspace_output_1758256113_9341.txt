@@ -1,0 +1,123 @@
+@inject PageService PageService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+@implements IDisposable
+
+<nav>
+    <ul class="navbar-nav">
+        @foreach (var item in _navigationItems)
+        {
+            <li class="nav-item">
+                <NavLink class="nav-link" href="@item.Url" Match="NavLinkMatch.All">
+                    @item.Title
+                </NavLink>
+            </li>
+        }
+        
+        <AuthorizeView>
+            <Authorized>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/admin" Match="NavLinkMatch.Prefix">
+                        Admin
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" @onclick="LogoutAsync" @onclick:preventDefault>
+                        Logout
+                    </a>
+                </li>
+            </Authorized>
+            <NotAuthorized>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/login">
+                        Login
+                    </NavLink>
+                </li>
+            </NotAuthorized>
+        </AuthorizeView>
+    </ul>
+</nav>
+
+@code {
+    private List<NavItem> _navigationItems = new List<NavItem>();
+    private bool _isDisposed;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadNavigationAsync();
+    }
+
+    private async Task LoadNavigationAsync()
+    {
+        try
+        {
+            var navItems = await PageService.GetNavigationAsync();
+            _navigationItems = new List<NavItem>();
+            
+            // Add home page
+            _navigationItems.Add(new NavItem { Title = "Home", Url = "/" });
+            
+            // Add other pages from the API
+            foreach (var item in navItems)
+            {
+                var itemDict = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(
+                    System.Text.Json.JsonSerializer.Serialize(item));
+                
+                if (itemDict.TryGetValue("slug", out var slugObj) && 
+                    itemDict.TryGetValue("title", out var titleObj))
+                {
+                    string slug = slugObj.ToString();
+                    string title = titleObj.ToString();
+                    
+                    if (slug != "home") // Skip home page as we already added it
+                    {
+                        _navigationItems.Add(new NavItem
+                        {
+                            Title = title,
+                            Url = $"/page/{slug}"
+                        });
+                    }
+                }
+            }
+        }
+        catch (Exception)
+        {
+            // If API call fails, add default navigation
+            _navigationItems = new List<NavItem>
+            {
+                new NavItem { Title = "Home", Url = "/" },
+                new NavItem { Title = "About", Url = "/page/about" },
+                new NavItem { Title = "Portfolio", Url = "/page/portfolio" },
+                new NavItem { Title = "Contact", Url = "/page/contact" }
+            };
+        }
+    }
+
+    private async Task LogoutAsync()
+    {
+        var authStateProvider = (CustomAuthStateProvider)AuthStateProvider;
+        var authService = new AuthService(new HttpClient { BaseAddress = new Uri(NavigationManager.BaseUri) });
+        
+        try
+        {
+            await authService.LogoutAsync();
+            authStateProvider.NotifyUserLogout();
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception)
+        {
+            // Handle logout failure
+        }
+    }
+
+    public void Dispose()
+    {
+        _isDisposed = true;
+    }
+
+    private class NavItem
+    {
+        public string Title { get; set; }
+        public string Url { get; set; }
+    }
+}
